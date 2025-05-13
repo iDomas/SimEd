@@ -4,9 +4,19 @@
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
+    <Application.Resources>
+        <ControlRecycling x:Key="ControlRecyclingKey" TryToUseIdAsKey="True" />
+        <Color x:Key="RegionColor">Transparent</Color>
+    </Application.Resources>
+    
     <Application.Styles>
         <FluentTheme DensityStyle="Compact" />
         <SimpleTheme></SimpleTheme>
         <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
+        
+        <DockFluentTheme />
+        <Style Selector="DockControl">
+            <Setter Property="(ControlRecyclingDataTemplate.ControlRecycling)" Value="{StaticResource ControlRecyclingKey}" />
+        </Style>
     </Application.Styles>
 </Application>

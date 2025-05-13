@@ -17,13 +17,14 @@ public partial class MainWindow : Window
         InitializeComponent();
         
         _registryOptions = new RegistryOptions(ThemeName.DarkPlus);
-
+/*
         _textMateInstallation = Editor.InstallTextMate(_registryOptions);
        
         Language csharpLanguage = _registryOptions.GetLanguageByExtension(".cs");
         string scopeName = _registryOptions.GetScopeByLanguageId(csharpLanguage.Id);
 
         _textMateInstallation.SetGrammar(scopeName);
+        */
     }
 
     private async void OnOpen(object? sender, RoutedEventArgs e)
@@ -40,7 +41,7 @@ public partial class MainWindow : Window
             textEditor.Text = await File.ReadAllTextAsync(fileName);
             addedTabItem.Content = textEditor;
             
-            DocumentsTabArea.Items.Add(addedTabItem);
+            //DocumentsTabArea.Items.Add(addedTabItem);
         }
     }
 }

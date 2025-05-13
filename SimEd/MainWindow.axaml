@@ -8,18 +8,42 @@
         Title="SimEd">
     <Grid RowDefinitions="Auto,*">
         <StackPanel>
-            <Button>Menus</Button>
-            <Button>Close</Button>
+            <StackPanel Orientation="Horizontal">
+                <Menu x:Name="MainMenu">
+                    <MenuItem Header="...">
+                        <MenuItem Header="_File">
+                            <MenuItem Header="_Open" Click="OnOpen"></MenuItem>
+                            <MenuItem Header="_Save"></MenuItem>
+                            <MenuItem Header="_Close"></MenuItem>
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
+            </StackPanel>
         </StackPanel>
-        <avaloniaEdit:TextEditor
-            Grid.Row="1"
-            MinWidth="300"
-            MinHeight="300"
-            IsVisible="True"
-            ShowLineNumbers="True"
-            HorizontalScrollBarVisibility="Auto"
-            VerticalScrollBarVisibility="Visible"
-            x:Name="Editor"
-            Text="class Test{}" />
+        
+        <DockPanel Grid.Row="1" x:Name="MainPanel">
+            <TabControl x:Name="LeftTabArea" DockPanel.Dock="Left" />
+            <TabControl x:Name="RightTabArea" DockPanel.Dock="Right" />
+            <TabControl x:Name="BottomTabArea" DockPanel.Dock="Bottom" />
+            <TabControl x:Name="TopTabArea" DockPanel.Dock="Top" />
+            
+            <TabControl x:Name="DocumentsTabArea">
+    
+                <TabItem Header="File1.cs">
+                    <avaloniaEdit:TextEditor
+                        MinWidth="300"
+                        MinHeight="300"
+                        IsVisible="True"
+                        ShowLineNumbers="True"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Visible"
+                        x:Name="Editor"
+                        Text="class Test{}" />
+
+                </TabItem>
+            </TabControl>
+        </DockPanel>
+        
+
     </Grid>
 </Window>

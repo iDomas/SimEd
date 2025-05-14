@@ -9,7 +9,6 @@ using Dock.Model.Mvvm.Controls;
 using SimEd.ViewModels.Docks;
 using SimEd.ViewModels.Documents;
 using SimEd.ViewModels.Solution;
-using SimEd.ViewModels.Tools;
 
 namespace SimEd.ViewModels;
 

@@ -131,22 +131,6 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
             return;
         }
 
-        var dlg = new OpenFileDialog
-        {
-            Filters = new List<FileDialogFilter>
-            {
-                new() { Name = "C# Files", Extensions = { "cs" } },
-                new() { Name = "Text document", Extensions = { "txt" } },
-                new() { Name = "All", Extensions = { "*" } }
-            },
-            AllowMultiple = true
-        };
-        var window = GetWindow();
-        if (window is null)
-        {
-            return;
-        }
-
         var results = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()        {
             Title = "Open layout",
             FileTypeFilter = GetOpenOpenLayoutFileTypes(),
@@ -167,14 +151,14 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         }
     }
 
-    private List<FilePickerFileType> GetOpenOpenLayoutFileTypes()
-    {
-        return new List<FilePickerFileType>
-        {
-            StorageService.CSharp,
-            StorageService.All
-        };
-    }
+    private static List<FilePickerFileType> GetOpenOpenLayoutFileTypes() =>
+    [
+        StorageService.CSharp,
+        StorageService.Java,
+        StorageService.Json,
+        StorageService.All
+    ];
+
     public async void FileSave()
     {
         if (GetFileViewModel() is { } fileViewModel)

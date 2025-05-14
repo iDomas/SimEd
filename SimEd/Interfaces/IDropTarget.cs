@@ -1,6 +1,6 @@
 ﻿using Avalonia.Input;
 
-namespace SimEd.ViewModels;
+namespace SimEd.Interfaces;
 
 public interface IDropTarget
 {

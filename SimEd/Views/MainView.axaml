@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="using:SimEd.ViewModels"
-             xmlns:views1="clr-namespace:SimEd.Views"
+             xmlns:views="clr-namespace:SimEd.Views"
              mc:Ignorable="d"
              d:DesignWidth="700" d:DesignHeight="350"
              x:CompileBindings="True" x:DataType="vm:MainWindowViewModel">
@@ -12,7 +12,7 @@
     <vm:MainWindowViewModel />
   </Design.DataContext>
   <Grid RowDefinitions="Auto,*" Background="Transparent" DragDrop.AllowDrop="True">
-    <views1:MenuView Grid.Row="0" />
+    <views:MenuView Grid.Row="0" />
     <DockControl Layout="{Binding Layout}" Margin="4" Grid.Row="1" />
   </Grid>
 </UserControl>

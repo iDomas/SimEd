@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using System.IO;
+using Avalonia.Controls;
 using AvaloniaEdit.TextMate;
 using Dock.Model.Mvvm.Controls;
 using SimEd.Views.Documents;
@@ -8,10 +9,6 @@ namespace SimEd.ViewModels.Documents;
 
 public class FileViewModel : Document, IViewAware
 {
-    private string _path = string.Empty;
-    private string _text = string.Empty;
-    private string _encoding = string.Empty;
-
     public string Path
     {
         get => _path;
@@ -29,26 +26,46 @@ public class FileViewModel : Document, IViewAware
         get => _encoding;
         set => SetProperty(ref _encoding, value);
     }
+    public FileView MainControl { get; set; }
+    
+    private string _path = string.Empty;
+    private string _text = string.Empty;
+    private string _encoding = string.Empty;
 
-    public Control Control
+    public void SetControl(Control control)
     {
-        set
-        {
-            MainControl = (FileView)value;
+        MainControl = (FileView)control;
 
-            UpdateView();
-        }
+        UpdateView();
     }
 
     private void UpdateView()
     {
         var registryOptions = new RegistryOptions(ThemeName.Light);
         var textMateInstallation = MainControl.MainTextEditor.InstallTextMate(registryOptions);
-        Language csharpLanguage = registryOptions.GetLanguageByExtension(".cs");
-        string scopeName = registryOptions.GetScopeByLanguageId(csharpLanguage.Id);
+        var extension = ExtensionOfFile(this.Path);
+        if (string.IsNullOrEmpty(extension))
+        {
+            extension = ".txt";
+        }
+        Language csharpLanguage = registryOptions.GetLanguageByExtension(extension);
+        string scopeName = registryOptions.GetScopeByLanguageId(csharpLanguage?.Id ?? "");
         textMateInstallation.SetGrammar(scopeName);
-        
     }
 
-    public FileView MainControl { get; set; }
+    private static string ExtensionOfFile(string fileName)
+    {
+        if (string.IsNullOrEmpty(fileName))
+        {
+            return string.Empty;
+        }
+        FileInfo fileInfo = new FileInfo(fileName);
+        if (!fileInfo.Exists)
+        {
+            return string.Empty;
+        }
+
+        return fileInfo.Extension;
+    }
+
 }

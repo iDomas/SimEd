@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:simEd="clr-namespace:SimEd"
              x:Class="SimEd.App"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Light">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
@@ -15,7 +15,7 @@
     </Application.Resources>
     
     <Application.Styles>
-        <FluentTheme DensityStyle="Compact" />
+        <FluentTheme DensityStyle="Compact"  />
         <SimpleTheme></SimpleTheme>
         <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
         

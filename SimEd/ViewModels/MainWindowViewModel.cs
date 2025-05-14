@@ -6,9 +6,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Dock.Model.Controls;
 using Dock.Model.Core;
+using SimEd.Interfaces;
 using SimEd.ViewModels.Documents;
 
 namespace SimEd.ViewModels;
@@ -17,6 +19,8 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 {
     private readonly IFactory? _factory;
     private IRootDock? _layout;
+
+    public ServicesProvider Provider { get; }
 
     public IRootDock? Layout
     {
@@ -33,6 +37,8 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         {
             _factory?.InitLayout(Layout);
         }
+
+        Provider = new ServicesProvider();
     }
 
     private Encoding GetEncoding(string path)
@@ -42,13 +48,14 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         {
             reader.Read();
         }
+
         return reader.CurrentEncoding;
     }
 
-    private FileViewModel OpenFileViewModel(string path)
+    private async Task<FileViewModel> OpenFileViewModel(string path)
     {
         var encoding = GetEncoding(path);
-        string text = File.ReadAllText(path, encoding);
+        string text = await File.ReadAllTextAsync(path, encoding);
         string title = Path.GetFileName(path);
         return new FileViewModel()
         {
@@ -61,7 +68,8 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     private void SaveFileViewModel(FileViewModel fileViewModel)
     {
-        File.WriteAllText((string)fileViewModel.Path, (string?)fileViewModel.Text, Encoding.GetEncoding((string)fileViewModel.Encoding));
+        File.WriteAllText((string)fileViewModel.Path, (string?)fileViewModel.Text,
+            Encoding.GetEncoding((string)fileViewModel.Encoding));
     }
 
     private void UpdateFileViewModel(FileViewModel fileViewModel, string path)
@@ -117,12 +125,19 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     public async void FileOpen()
     {
+        var storageProvider = StorageService.GetStorageProvider();
+        if (storageProvider is null)
+        {
+            return;
+        }
+
         var dlg = new OpenFileDialog
         {
             Filters = new List<FileDialogFilter>
             {
-                new() {Name = "Text document", Extensions = {"txt"}},
-                new() {Name = "All", Extensions = {"*"}}
+                new() { Name = "C# Files", Extensions = { "cs" } },
+                new() { Name = "Text document", Extensions = { "txt" } },
+                new() { Name = "All", Extensions = { "*" } }
             },
             AllowMultiple = true
         };
@@ -131,20 +146,35 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         {
             return;
         }
-        var result = await dlg.ShowAsync(window);
-        if (result is { Length: > 0 })
+
+        var results = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()        {
+            Title = "Open layout",
+            FileTypeFilter = GetOpenOpenLayoutFileTypes(),
+            AllowMultiple = false
+        });
+
+        if (results is { Count: > 0 })
         {
-            foreach (var path in result)
+            foreach (var storageFile in results)
             {
+                var path = storageFile.Path.AbsolutePath;
                 if (!string.IsNullOrEmpty(path))
                 {
-                    var untitledFileViewModel = OpenFileViewModel(path);
+                    FileViewModel untitledFileViewModel = await OpenFileViewModel(path);
                     AddFileViewModel(untitledFileViewModel);
                 }
             }
         }
     }
 
+    private List<FilePickerFileType> GetOpenOpenLayoutFileTypes()
+    {
+        return new List<FilePickerFileType>
+        {
+            StorageService.CSharp,
+            StorageService.All
+        };
+    }
     public async void FileSave()
     {
         if (GetFileViewModel() is { } fileViewModel)
@@ -174,8 +204,8 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         {
             Filters = new List<FileDialogFilter>
             {
-                new() {Name = "Text document", Extensions = {"txt"}},
-                new() {Name = "All", Extensions = {"*"}}
+                new() { Name = "Text document", Extensions = { "txt" } },
+                new() { Name = "All", Extensions = { "*" } }
             },
             InitialFileName = fileViewModel.Title,
             DefaultExtension = "txt"
@@ -185,6 +215,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         {
             return;
         }
+
         var result = await dlg.ShowAsync(window);
         if (result is { })
         {
@@ -208,27 +239,28 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
     {
         if (!e.Data.Contains(DataFormats.Files))
         {
-            e.DragEffects = DragDropEffects.None; 
+            e.DragEffects = DragDropEffects.None;
             e.Handled = true;
         }
     }
 
-    public void Drop(object? sender, DragEventArgs e)
+    public async void Drop(object? sender, DragEventArgs e)
     {
         if (e.Data.Contains(DataFormats.Files))
         {
             var result = e.Data.GetFileNames();
-            if (result is {})
+            if (result is { })
             {
                 foreach (var path in result)
                 {
                     if (!string.IsNullOrEmpty(path))
                     {
-                        var untitledFileViewModel = OpenFileViewModel(path);
+                        var untitledFileViewModel = await OpenFileViewModel(path);
                         AddFileViewModel(untitledFileViewModel);
                     }
                 }
             }
+
             e.Handled = true;
         }
     }
@@ -239,6 +271,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         {
             return desktopLifetime.MainWindow;
         }
+
         return null;
     }
 }

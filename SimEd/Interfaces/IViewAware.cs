@@ -4,5 +4,5 @@ namespace SimEd.ViewModels;
 
 public interface IViewAware
 {
-    Control Control { set; }
+    void SetControl (Control control);
 }

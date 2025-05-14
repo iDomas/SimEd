@@ -41,4 +41,10 @@
         
         <Reference Include="Avalonia.Themes.Simple" />
     </ItemGroup>
+    <ItemGroup>
+      <Compile Update="Views\Solution\SolutionView.axaml.cs">
+        <DependentUpon>MenuView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
 </Project>

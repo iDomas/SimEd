@@ -5,7 +5,7 @@ namespace SimEd;
 
 public class LanguageChooser : ILanguageChooser
 {
-    Dictionary<string, string> _languages = [];
+    private readonly Dictionary<string, string> _languages = [];
     public string ScopeNameOfLanguage(string language)
     {
         if (_languages.TryGetValue(language, out string scopeName))

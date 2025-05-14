@@ -7,7 +7,7 @@ namespace SimEd.Views.Documents;
 
 public class DocumentTextBindingBehavior : Behavior<TextEditor>
 {
-    private TextEditor _textEditor = null;
+    private TextEditor? _textEditor;
 
     public static readonly StyledProperty<string> TextProperty =
         AvaloniaProperty.Register<DocumentTextBindingBehavior, string>(nameof(Text));
@@ -42,13 +42,13 @@ public class DocumentTextBindingBehavior : Behavior<TextEditor>
 
     private void TextChanged(object sender, EventArgs eventArgs)
     {
-        if (_textEditor != null && _textEditor.Document != null)
+        if (_textEditor is not null && _textEditor.Document != null)
         {
             Text = _textEditor.Document.Text;
         }
     }
 
-    public class OnTextPropertyChanged(TextEditor _textEditor) : IObserver<string>
+    private class OnTextPropertyChanged(TextEditor textEditor) : IObserver<string>
     {
         public void OnCompleted()
         {
@@ -59,13 +59,15 @@ public class DocumentTextBindingBehavior : Behavior<TextEditor>
             throw new NotImplementedException();
         }
 
-        public void OnNext(string text)
-        {  if (_textEditor != null && _textEditor.Document != null && text != null)
+        public void OnNext(string? text)
+        {
+            if (textEditor.Document is null || text is null)
             {
-                var caretOffset = _textEditor.CaretOffset;
-                _textEditor.Document.Text = text;
-                _textEditor.CaretOffset = caretOffset;
+                return;
             }
+            var caretOffset = textEditor.CaretOffset;
+            textEditor.Document.Text = text;
+            textEditor.CaretOffset = caretOffset;
         }
     }
 }

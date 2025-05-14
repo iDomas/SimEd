@@ -8,6 +8,7 @@ using Dock.Model.Mvvm;
 using Dock.Model.Mvvm.Controls;
 using SimEd.ViewModels.Docks;
 using SimEd.ViewModels.Documents;
+using SimEd.ViewModels.Solution;
 using SimEd.ViewModels.Tools;
 
 namespace SimEd.ViewModels;
@@ -16,14 +17,12 @@ public class NotepadFactory : Factory
 {
     private IRootDock? _rootDock;
     private IDocumentDock? _documentDock;
-    private ITool? _findTool;
-    private ITool? _replaceTool;
 
     public override IDocumentDock CreateDocumentDock() => new FilesDocumentDock();
 
     public override IRootDock CreateLayout()
     {
-        var untitledFileViewModel = new FileViewModel()
+        FileViewModel untitledFileViewModel = new()
         {
             Path = string.Empty,
             Title = "Untitled",
@@ -31,19 +30,13 @@ public class NotepadFactory : Factory
             Encoding = Encoding.Default.WebName
         };
 
-        var findViewModel = new FindViewModel
+        SolutionViewModel solutionViewModel = new()
         {
-            Id = "Find",
-            Title = "Find"
+            Id = "Solution",
+            Title = "Solution",
         };
 
-        var replaceViewModel = new ReplaceViewModel
-        {
-            Id = "Replace",
-            Title = "Replace"
-        };
-
-        var documentDock = new FilesDocumentDock()
+        FilesDocumentDock documentDock = new()
         {
             Id = "Files",
             Title = "Files",
@@ -57,54 +50,45 @@ public class NotepadFactory : Factory
             CanCreateDocument = true
         };
 
-        var tools = new ProportionalDock
+        ProportionalDock solutionDock = new()
         {
             Proportion = 0.2,
             Orientation = Orientation.Vertical,
+            CanClose = false,
             VisibleDockables = CreateList<IDockable>
             (
                 new ToolDock
                 {
-                    ActiveDockable = findViewModel,
+                    ActiveDockable = solutionViewModel,
                     VisibleDockables = CreateList<IDockable>
                     (
-                        findViewModel
+                        solutionViewModel
                     ),
-                    Alignment = Alignment.Right,
-                    GripMode = GripMode.Visible
-                },
-                new ProportionalDockSplitter(),
-                new ToolDock
-                {
-                    ActiveDockable = replaceViewModel,
-                    VisibleDockables = CreateList<IDockable>
-                    (
-                        replaceViewModel
-                    ),
-                    Alignment = Alignment.Right,
+                    CanClose = false,
+                    Alignment = Alignment.Left,
                     GripMode = GripMode.Visible
                 }
             )
         };
 
-        var windowLayout = CreateRootDock();
+        IRootDock windowLayout = CreateRootDock();
         windowLayout.Title = "Default";
-        var windowLayoutContent = new ProportionalDock
+        ProportionalDock windowLayoutContent = new()
         {
             Orientation = Orientation.Horizontal,
             IsCollapsable = false,
             VisibleDockables = CreateList<IDockable>
             (
-                documentDock,
+                solutionDock,
                 new ProportionalDockSplitter(),
-                tools
+                documentDock
             )
         };
         windowLayout.IsCollapsable = false;
         windowLayout.VisibleDockables = CreateList<IDockable>(windowLayoutContent);
         windowLayout.ActiveDockable = windowLayoutContent;
 
-        var rootDock = CreateRootDock();
+        IRootDock rootDock = CreateRootDock();
 
         rootDock.IsCollapsable = false;
         rootDock.VisibleDockables = CreateList<IDockable>(windowLayout);
@@ -113,15 +97,12 @@ public class NotepadFactory : Factory
 
         _documentDock = documentDock;
         _rootDock = rootDock;
-        _findTool = findViewModel;
-        _replaceTool = replaceViewModel;
-
         return rootDock;
     }
 
     public override void InitLayout(IDockable layout)
     {
-        ContextLocator = new Dictionary<string, Func<object?>>
+        ContextLocator = new()
         {
             ["Find"] = () => layout,
             ["Replace"] = () => layout
@@ -130,12 +111,10 @@ public class NotepadFactory : Factory
         DockableLocator = new Dictionary<string, Func<IDockable?>>
         {
             ["Root"] = () => _rootDock,
-            ["Files"] = () => _documentDock,
-            ["Find"] = () => _findTool,
-            ["Replace"] = () => _replaceTool
+            ["Files"] = () => _documentDock
         };
 
-        HostWindowLocator = new Dictionary<string, Func<IHostWindow?>>
+        HostWindowLocator = new()
         {
             [nameof(IDockWindow)] = () => new HostWindow()
         };

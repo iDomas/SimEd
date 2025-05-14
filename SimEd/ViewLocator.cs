@@ -29,9 +29,9 @@ public partial class ViewLocator : IDataTemplate
         resultControl.DataContext = data;
         if (data is IViewAware viewAware)
         {
-            viewAware.Control = resultControl;
+            viewAware.SetControl(resultControl);
         }
-        
+
         return resultControl;
     }
 

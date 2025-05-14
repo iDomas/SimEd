@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Dock.Model.Core;
+using SimEd.ViewModels;
 using StaticViewLocator;
 
 namespace SimEd;
@@ -19,12 +20,19 @@ public partial class ViewLocator : IDataTemplate
 
         var type = data.GetType();
 
-        if (ViewLocator.s_views.TryGetValue(type, out var func))
+        if (!s_views.TryGetValue(type, out var func))
         {
-            return func.Invoke();
+            throw new Exception($"Unable to create view for type: {type}");
         }
 
-        throw new Exception($"Unable to create view for type: {type}");
+        Control resultControl = func.Invoke();
+        resultControl.DataContext = data;
+        if (data is IViewAware viewAware)
+        {
+            viewAware.Control = resultControl;
+        }
+        
+        return resultControl;
     }
 
     public bool Match(object? data)

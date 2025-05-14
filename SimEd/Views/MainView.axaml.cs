@@ -13,12 +13,6 @@ public partial class MainView : UserControl
         AddHandler(DragDrop.DropEvent, DropHandler);
         AddHandler(DragDrop.DragOverEvent, DragOverHandler);
     }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
-
     private void DragOverHandler(object? sender, DragEventArgs e)
     {
         if (DataContext is IDropTarget dropTarget)

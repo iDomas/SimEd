@@ -1,6 +1,9 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using SimEd.ViewModels;
+using SimEd.Views;
+using SimEd.Views;
 
 namespace SimEd;
 
@@ -13,11 +16,50 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+   
+        // DockManager.s_enableSplitToWindow = true;
+
+        var mainWindowViewModel = new MainWindowViewModel();
+
+        switch (ApplicationLifetime)
         {
-            desktop.MainWindow = new MainWindow();
+            case IClassicDesktopStyleApplicationLifetime desktopLifetime:
+            {
+                var mainWindow = new MainWindow
+                {
+                    DataContext = mainWindowViewModel
+                };
+
+                mainWindow.Closing += (_, _) =>
+                {
+                    mainWindowViewModel.CloseLayout();
+                };
+
+                desktopLifetime.MainWindow = mainWindow;
+
+                desktopLifetime.Exit += (_, _) =>
+                {
+                    mainWindowViewModel.CloseLayout();
+                };
+
+                break;
+            }
+            case ISingleViewApplicationLifetime singleViewLifetime:
+            {
+                var mainView = new MainView()
+                {
+                    DataContext = mainWindowViewModel
+                };
+
+                singleViewLifetime.MainView = mainView;
+
+                break;
+            }
         }
 
         base.OnFrameworkInitializationCompleted();
+#if DEBUG
+        this.AttachDevTools();
+#endif
     }
 }

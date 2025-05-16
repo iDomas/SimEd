@@ -11,7 +11,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{71CFD877-1245-46F5-ABAE-0A4A2E029BB4}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
-		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Global

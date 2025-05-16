@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -24,29 +23,29 @@
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Avalonia.Themes.Simple" Version="11.3.0"/>
-        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.3.0" />
+        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.3.0"/>
         <PackageReference Include="AvaloniaEdit.TextMate" Version="11.3.0"/>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-        <PackageReference Include="Dock.Avalonia" Version="11.3.0.1" />
-        <PackageReference Include="Dock.Model.Avalonia" Version="11.3.0.1" />
-        <PackageReference Include="Dock.Model.Mvvm" Version="11.3.0.1" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
+        <PackageReference Include="Dock.Avalonia" Version="11.3.0.1"/>
+        <PackageReference Include="Dock.Model.Avalonia" Version="11.3.0.1"/>
+        <PackageReference Include="Dock.Model.Mvvm" Version="11.3.0.1"/>
         <PackageReference Include="Jab" Version="0.11.0"/>
         <PackageReference Include="StaticViewLocator" Version="0.0.1">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="TextMateSharp.Grammars" Version="1.0.66"/>
-        <PackageReference Include="System.Text.Json" Version="9.0.5" />
-        
-        <Reference Include="Avalonia.Themes.Simple" />
+        <PackageReference Include="System.Text.Json" Version="9.0.5"/>
+
+        <Reference Include="Avalonia.Themes.Simple"/>
     </ItemGroup>
     <ItemGroup>
-      <Compile Update="Views\Solution\SolutionView.axaml.cs">
-        <DependentUpon>MenuView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
+        <Compile Update="Views\Solution\SolutionView.axaml.cs">
+            <DependentUpon>MenuView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\SimEd.Common\SimEd.Common.csproj" />
+        <ProjectReference Include="..\SimEd.Common\SimEd.Common.csproj"/>
     </ItemGroup>
 </Project>

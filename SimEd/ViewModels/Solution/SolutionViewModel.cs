@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Dock.Model.Mvvm.Controls;
+using SimEd.Views.Solution;
 
 namespace SimEd.ViewModels.Solution;
 
-public class SolutionViewModel : Tool
+public class SolutionViewModel : Tool, IViewAware
 {
     private string _solutionPath = Directory.GetCurrentDirectory();
 
@@ -43,4 +45,17 @@ public class SolutionViewModel : Tool
         StorageService.Json,
         StorageService.All
     ];
+
+    public void SetControl(Control control)
+    {
+        View = (SolutionView)control;
+        UpdateView();
+    }
+
+    private void UpdateView()
+    {
+        
+    }
+
+    public SolutionView View { get; set; }
 }

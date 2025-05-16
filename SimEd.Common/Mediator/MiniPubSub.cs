@@ -6,6 +6,9 @@ public class MiniPubSub : IMiniPubSub
     private readonly TypedDictionaryOfValues<BaseCommand> _mapCommands = new();
     private readonly TypedDictionaryOfValues<BaseQuery> _mapQuery = new();
 
+    public MiniPubSub()
+    {
+    }
 
     public void Publish<T>(T value)
     {

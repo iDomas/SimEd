@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using SimEd.Models;
 using SimEd.ViewModels;
 using SimEd.Views;
 
@@ -17,6 +18,10 @@ public partial class App : Application
     {
    
         // DockManager.s_enableSplitToWindow = true;
+
+        var appSettings = new AppSettingsReader();
+        var defaultSettings = new AppSettings();
+        appSettings.Write(defaultSettings);
 
         var mainWindowViewModel = new MainWindowViewModel();
 

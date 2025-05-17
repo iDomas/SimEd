@@ -1,3 +1,5 @@
+using SimEd.Common.Interfaces;
+
 namespace SimEd.Common.Mediator;
 
 public class MiniPubSub : IMiniPubSub

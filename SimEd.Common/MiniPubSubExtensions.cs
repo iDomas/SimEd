@@ -1,4 +1,4 @@
-using SimEd.Common.Mediator;
+using SimEd.Common.Interfaces;
 
 namespace SimEd.Common;
 

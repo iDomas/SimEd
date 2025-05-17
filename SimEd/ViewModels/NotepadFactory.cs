@@ -4,7 +4,7 @@ using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Mvvm;
 using Dock.Model.Mvvm.Controls;
-using SimEd.IoC;
+using SimEd.Common.Interfaces;
 using SimEd.ViewModels.Docks;
 using SimEd.ViewModels.Documents;
 using SimEd.ViewModels.Solution;

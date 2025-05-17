@@ -1,7 +1,8 @@
 ﻿using Avalonia.Controls.Templates;
 using Jab;
-using SimEd.Common;
+using SimEd.Common.Interfaces;
 using SimEd.Common.Mediator;
+using SimEd.IoC.Tools;
 using SimEd.Models;
 using SimEd.ViewModels;
 

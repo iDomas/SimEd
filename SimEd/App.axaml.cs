@@ -2,8 +2,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
-using SimEd.IoC;
-using SimEd.Models;
+using SimEd.Common.Interfaces;
+using SimEd.IoC.Tools;
 using SimEd.ViewModels;
 using SimEd.Views;
 

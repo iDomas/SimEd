@@ -7,8 +7,8 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Dock.Model.Controls;
 using Dock.Model.Core;
+using SimEd.Common.Interfaces;
 using SimEd.Interfaces;
-using SimEd.IoC;
 using SimEd.ViewModels.Documents;
 
 namespace SimEd.ViewModels;

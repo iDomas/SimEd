@@ -1,6 +1,8 @@
-﻿namespace SimEd.IoC;
+﻿using SimEd.IoC.Interfaces;
 
-public class GetServiceHost : IGetService
+namespace SimEd.IoC.Tools;
+
+public class GetServiceHost : IGetServiceHost
 {
     public ServiceProvider Provider { get; set; }
 

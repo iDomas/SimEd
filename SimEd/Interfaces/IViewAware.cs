@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 
-namespace SimEd.ViewModels;
+namespace SimEd.Interfaces;
 
 public interface IViewAware
 {

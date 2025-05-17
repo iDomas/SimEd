@@ -1,9 +1,9 @@
 ﻿using Avalonia.Controls.Templates;
-using Dock.Model.Mvvm;
 using Jab;
+using SimEd.Common;
 using SimEd.Common.Mediator;
+using SimEd.Models;
 using SimEd.ViewModels;
-using SimEd.Views;
 
 namespace SimEd.IoC;
 
@@ -13,6 +13,7 @@ namespace SimEd.IoC;
 [Singleton<IDataTemplate, ViewLocator>]
 [Singleton(typeof(NotepadFactory))]
 [Singleton<IGetService, GetServiceHost>]
+[Singleton<IAppSettingsReader, AppSettingsReader>]
 [Singleton(typeof(MainWindowViewModel))]
 public partial class ServiceProvider
 {

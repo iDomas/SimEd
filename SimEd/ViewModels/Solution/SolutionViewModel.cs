@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Dock.Model.Mvvm.Controls;
+using SimEd.Interfaces;
 using SimEd.Views.Solution;
 
 namespace SimEd.ViewModels.Solution;

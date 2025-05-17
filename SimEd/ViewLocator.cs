@@ -1,9 +1,8 @@
-using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Dock.Model.Core;
-using SimEd.ViewModels;
+using SimEd.Interfaces;
 using StaticViewLocator;
 
 namespace SimEd;

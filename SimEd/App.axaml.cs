@@ -11,32 +11,25 @@ namespace SimEd;
 
 public partial class App : Application
 {
-    private ServiceProvider _serviceProvider;
+    private IGetService _serviceProvider;
 
     public override void Initialize()
     {
         _serviceProvider = ServicesTools.Initialize();
-        var viewLocator = _serviceProvider.GetService<IDataTemplate>();
-        this.DataTemplates.Add(viewLocator);
+        DataTemplates.Add(_serviceProvider.GetService<IDataTemplate>());
         AvaloniaXamlLoader.Load(this);
         base.Initialize();
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // DockManager.s_enableSplitToWindow = true;
-
-        var appSettings = new AppSettingsReader();
-        var defaultSettings = new AppSettings();
-        appSettings.Write(defaultSettings);
-
         MainWindowViewModel mainWindowViewModel = _serviceProvider.GetService<MainWindowViewModel>();
 
         switch (ApplicationLifetime)
         {
             case IClassicDesktopStyleApplicationLifetime desktopLifetime:
             {
-                var mainWindow = new MainWindow
+                MainWindow mainWindow = new ()
                 {
                     DataContext = mainWindowViewModel
                 };
@@ -51,7 +44,7 @@ public partial class App : Application
             }
             case ISingleViewApplicationLifetime singleViewLifetime:
             {
-                var mainView = new MainView()
+                MainView mainView = new ()
                 {
                     DataContext = mainWindowViewModel
                 };

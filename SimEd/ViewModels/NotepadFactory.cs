@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using Dock.Avalonia.Controls;
 using Dock.Model.Controls;
 using Dock.Model.Core;
@@ -48,10 +46,8 @@ public class NotepadFactory : Factory
             Title = "Files",
             IsCollapsable = false,
             Proportion = double.NaN,
-            ActiveDockable = untitledFileViewModel,
             VisibleDockables = CreateList<IDockable>
             (
-                untitledFileViewModel
             ),
             CanCreateDocument = true
         };

@@ -1,7 +1,7 @@
-﻿using System.IO;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using AvaloniaEdit.TextMate;
 using Dock.Model.Mvvm.Controls;
+using SimEd.Interfaces;
 using SimEd.Views.Documents;
 using TextMateSharp.Grammars;
 

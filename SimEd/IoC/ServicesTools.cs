@@ -1,12 +1,12 @@
 ﻿namespace SimEd.IoC;
 
-public static class ServicesTools
+internal static class ServicesTools
 {
-    public static ServiceProvider Initialize()
+    public static IGetService Initialize()
     {
         ServiceProvider serviceProvider = new ServiceProvider();
         IGetService getService = serviceProvider.GetService<IGetService>();
         getService.Provider = serviceProvider;
-        return serviceProvider;
+        return getService;
     }
 }

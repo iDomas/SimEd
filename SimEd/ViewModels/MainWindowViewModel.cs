@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -10,7 +7,6 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Dock.Model.Controls;
 using Dock.Model.Core;
-using Dock.Model.Mvvm;
 using SimEd.Interfaces;
 using SimEd.IoC;
 using SimEd.ViewModels.Documents;
@@ -22,7 +18,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
     private readonly IFactory? _factory;
     private IRootDock? _layout;
 
-    public IoC.ServiceProvider Provider { get; }
+    public IGetService Provider { get; }
 
     public IRootDock? Layout
     {
@@ -32,9 +28,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     public MainWindowViewModel(IGetService serviceProvider)
     {
-        var provider = serviceProvider.Provider;
-
-        Provider = provider;
+        Provider = serviceProvider;
         _factory = serviceProvider.GetService<NotepadFactory>();
 
         Layout = _factory?.CreateLayout();

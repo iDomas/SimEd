@@ -49,5 +49,6 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\SimEd.Common\SimEd.Common.csproj"/>
+        <ProjectReference Include="..\SimEd.Models\SimEd.Models.csproj" />
     </ItemGroup>
 </Project>

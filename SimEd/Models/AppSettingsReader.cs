@@ -1,21 +1,21 @@
-﻿using System.IO;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 
 namespace SimEd.Models;
 
-public class AppSettingsReader
+public class AppSettingsReader : IAppSettingsReader
 {
     string SettingsJsonPath => Path.Combine(AppCustomDirectories.SettingsDirectory, "appsettings.json");
 
-    public AppSettings Read()
+    public async Task<AppSettings> Read()
     {
         if (!File.Exists(SettingsJsonPath))
         {
             return new AppSettings();
         }
-        var jsonString = File.ReadAllText(SettingsJsonPath);
-        AppSettings appSettings = JsonSerializer.Deserialize<AppSettings>(jsonString, SourceGenerationContext.Default.AppSettings)!;
+
+        string jsonString = await File.ReadAllTextAsync(SettingsJsonPath).ConfigureAwait(false);
+        AppSettings appSettings =
+            JsonSerializer.Deserialize<AppSettings>(jsonString, CodeGen.SourceGenerationContext.Default.AppSettings)!;
         return appSettings;
     }
 
@@ -23,7 +23,7 @@ public class AppSettingsReader
     {
         FileSystemHelper.CreateDirectory(AppCustomDirectories.SettingsDirectory);
         var jsonString = JsonSerializer.Serialize(
-            settings, SourceGenerationContext.Default.AppSettings);
+            settings, CodeGen.SourceGenerationContext.Default.AppSettings);
 
         await File.WriteAllTextAsync(SettingsJsonPath, jsonString);
     }

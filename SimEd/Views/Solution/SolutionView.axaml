@@ -39,7 +39,10 @@
         <TreeView
             Grid.Row="1"
             x:Name="TreeView"
-            ItemsSource="{Binding Nodes}">
+            SelectedItem="{Binding Selected}"
+            ItemsSource="{Binding Nodes}"
+            DoubleTapped="SelectedInSolutionDoubleTapped"
+            >
             <TreeView.ItemTemplate>
                 <TreeDataTemplate ItemsSource="{Binding Children}">
                     <TextBlock Text="{Binding Name}" />

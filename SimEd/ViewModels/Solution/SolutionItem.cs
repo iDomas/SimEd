@@ -2,7 +2,7 @@
 
 namespace SimEd.ViewModels.Solution;
 
-public readonly record struct SolutionItem(string Name, string Path, ObservableCollection<SolutionItem> Children)
+public record SolutionItem(string Name, string Path, ObservableCollection<SolutionItem> Children)
 {
     public SolutionItem AddChild(string name, string path)
     {

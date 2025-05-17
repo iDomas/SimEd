@@ -10,11 +10,13 @@ using Dock.Model.Core;
 using SimEd.Common.Interfaces;
 using SimEd.Interfaces;
 using SimEd.ViewModels.Documents;
+using SimEd.ViewModels.Solution;
 
 namespace SimEd.ViewModels;
 
 public class MainWindowViewModel : ObservableObject, IDropTarget
 {
+    private readonly IMiniPubSub _pubSub;
     private readonly IFactory? _factory;
     private IRootDock? _layout;
 
@@ -26,8 +28,9 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         set => SetProperty(ref _layout, value);
     }
 
-    public MainWindowViewModel(IGetService serviceProvider)
+    public MainWindowViewModel(IGetService serviceProvider, IMiniPubSub pubSub)
     {
+        _pubSub = pubSub;
         Provider = serviceProvider;
         _factory = serviceProvider.GetService<NotepadFactory>();
 
@@ -36,6 +39,14 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         {
             _factory?.InitLayout(Layout);
         }
+
+        _pubSub.AddEvent<FileIsOpened>(OnFileOpened);
+    }
+
+    private async void OnFileOpened(FileIsOpened fileIsOpened)
+    {
+        FileViewModel untitledFileViewModel = await OpenFileViewModel(fileIsOpened.FileItem.Path);
+        AddFileViewModel(untitledFileViewModel);
     }
 
     private Encoding GetEncoding(string path)

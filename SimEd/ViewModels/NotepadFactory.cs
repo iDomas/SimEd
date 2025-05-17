@@ -6,6 +6,7 @@ using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Mvvm;
 using Dock.Model.Mvvm.Controls;
+using SimEd.IoC;
 using SimEd.ViewModels.Docks;
 using SimEd.ViewModels.Documents;
 using SimEd.ViewModels.Solution;
@@ -14,8 +15,14 @@ namespace SimEd.ViewModels;
 
 public class NotepadFactory : Factory
 {
+    private readonly IGetService _getService;
     private IRootDock? _rootDock;
     private IDocumentDock? _documentDock;
+
+    public NotepadFactory(IGetService getService)
+    {
+        _getService = getService;
+    }
 
     public override IDocumentDock CreateDocumentDock() => new FilesDocumentDock();
 

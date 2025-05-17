@@ -11,6 +11,13 @@ namespace SimEd;
 [StaticViewLocator]
 public partial class ViewLocator : IDataTemplate
 {
+    private readonly IServiceProvider _serviceProvider;
+
+    public ViewLocator(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
     public Control? Build(object? data)
     {
         if (data is null)

@@ -10,7 +10,9 @@
         <PublishTrimmed>true</PublishTrimmed>
         <TargetPlatform>win-x86</TargetPlatform>
         <PublishAot>true</PublishAot>
+        <OptimizationPreference>Speed</OptimizationPreference>
     </PropertyGroup>
+    
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="11.3.0"/>
         <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.3.0"/>

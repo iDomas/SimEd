@@ -10,7 +10,9 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Dock.Model.Controls;
 using Dock.Model.Core;
+using Dock.Model.Mvvm;
 using SimEd.Interfaces;
+using SimEd.IoC;
 using SimEd.ViewModels.Documents;
 
 namespace SimEd.ViewModels;
@@ -20,7 +22,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
     private readonly IFactory? _factory;
     private IRootDock? _layout;
 
-    public ServicesProvider Provider { get; }
+    public IoC.ServiceProvider Provider { get; }
 
     public IRootDock? Layout
     {
@@ -28,17 +30,18 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         set => SetProperty(ref _layout, value);
     }
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(IGetService serviceProvider)
     {
-        _factory = new NotepadFactory();
+        var provider = serviceProvider.Provider;
+
+        Provider = provider;
+        _factory = serviceProvider.GetService<NotepadFactory>();
 
         Layout = _factory?.CreateLayout();
         if (Layout is { })
         {
             _factory?.InitLayout(Layout);
         }
-
-        Provider = new ServicesProvider();
     }
 
     private Encoding GetEncoding(string path)
@@ -131,7 +134,8 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
             return;
         }
 
-        var results = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()        {
+        var results = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
+        {
             Title = "Open layout",
             FileTypeFilter = GetOpenOpenLayoutFileTypes(),
             AllowMultiple = false

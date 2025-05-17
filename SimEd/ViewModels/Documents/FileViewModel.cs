@@ -9,6 +9,10 @@ namespace SimEd.ViewModels.Documents;
 
 public class FileViewModel : Document, IViewAware
 {
+    public FileViewModel()
+    {
+        
+    }
     public string Path
     {
         get => _path;

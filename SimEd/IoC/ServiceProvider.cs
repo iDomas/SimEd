@@ -5,6 +5,7 @@ using SimEd.Common.Mediator;
 using SimEd.IoC.Tools;
 using SimEd.Models;
 using SimEd.ViewModels;
+using SimEd.ViewModels.Solution;
 
 namespace SimEd.IoC;
 
@@ -15,6 +16,7 @@ namespace SimEd.IoC;
 [Singleton(typeof(NotepadFactory))]
 [Singleton<IGetService, GetServiceHost>]
 [Singleton<IAppSettingsReader, AppSettingsReader>]
+[Singleton(typeof(SolutionViewModel))]
 [Singleton(typeof(MainWindowViewModel))]
 public partial class ServiceProvider
 {

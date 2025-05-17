@@ -1,6 +1,9 @@
-﻿using Avalonia.Controls;
+﻿using System.Collections.ObjectModel;
+using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using AvaloniaEdit.Utils;
 using Dock.Model.Mvvm.Controls;
+using SimEd.Common.Interfaces;
 using SimEd.Interfaces;
 using SimEd.Views.Solution;
 
@@ -8,12 +11,30 @@ namespace SimEd.ViewModels.Solution;
 
 public class SolutionViewModel : Tool, IViewAware
 {
+    private readonly IMiniPubSub _pubSub;
+
+
+    public ObservableCollection<SolutionItem> Nodes { get; set; } = [];
+    public SolutionView View { get; set; }
+
+    public SolutionItem Root { get; set; }
+
+    public SolutionViewModel(IMiniPubSub pubSub)
+    {
+        _pubSub = pubSub;
+        Root = new SolutionItem("Solution", "Solution", []);
+    }
+
     private string _solutionPath = Directory.GetCurrentDirectory();
 
     public string SolutionPath
     {
         get => _solutionPath;
-        set => SetProperty(ref _solutionPath, value);
+        set
+        {
+            SetProperty(ref _solutionPath, value);
+            UpdateView();
+        }
     }
 
     public async void OnSolutionChosen()
@@ -24,7 +45,8 @@ public class SolutionViewModel : Tool, IViewAware
             return;
         }
 
-        var results = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()        {
+        var results = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+        {
             Title = "Open Solution",
             AllowMultiple = false
         });
@@ -34,16 +56,7 @@ public class SolutionViewModel : Tool, IViewAware
             var selectedDir = results[0].Path;
             SolutionPath = new DirectoryInfo(selectedDir.AbsolutePath).FullName;
         }
-        
     }
-
-    private static List<FilePickerFileType> GetOpenOpenLayoutFileTypes() =>
-    [
-        StorageService.CSharp,
-        StorageService.Java,
-        StorageService.Json,
-        StorageService.All
-    ];
 
     public void SetControl(Control control)
     {
@@ -53,8 +66,14 @@ public class SolutionViewModel : Tool, IViewAware
 
     private void UpdateView()
     {
-        
-    }
+        var dirInfo = new DirectoryInfo(SolutionPath);
+        if (!dirInfo.Exists)
+        {
+            return;
+        }
 
-    public SolutionView View { get; set; }
+        Root = SolutionItemScanner.ScanDirectory(dirInfo);
+        Nodes.Clear();
+        Nodes.AddRange(Root.Children);
+    }
 }

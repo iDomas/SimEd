@@ -34,12 +34,10 @@ public class NotepadFactory : Factory
             Encoding = Encoding.Default.WebName
         };
 
-        SolutionViewModel solutionViewModel = new()
-        {
-            Id = "Solution",
-            Title = "Solution",
-        };
-
+        SolutionViewModel solutionViewModel = _getService.GetService<SolutionViewModel>();
+        solutionViewModel.Id = "Solution";
+        solutionViewModel.Title = "Solution";
+        
         FilesDocumentDock documentDock = new()
         {
             Id = "Files",

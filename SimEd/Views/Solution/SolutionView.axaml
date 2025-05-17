@@ -24,11 +24,10 @@
                     <Button
                         Command="{Binding OnSolutionChosen}"
                         Content="..."
-                        Margin="2"
-                        >
+                        Margin="2">
                     </Button>
 
-                    <ComboBox SelectedIndex="2"  Margin="2">
+                    <ComboBox SelectedIndex="2" Margin="2">
                         <ComboBoxItem>Generic</ComboBoxItem>
                         <ComboBoxItem>Java</ComboBoxItem>
                         <ComboBoxItem>C#</ComboBoxItem>
@@ -39,7 +38,13 @@
         </StackPanel>
         <TreeView
             Grid.Row="1"
-            x:Name="TreeView">
+            x:Name="TreeView"
+            ItemsSource="{Binding Nodes}">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
         </TreeView>
     </Grid>
 </UserControl>

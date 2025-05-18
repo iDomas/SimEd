@@ -11,10 +11,9 @@ namespace SimEd.IoC;
 
 [ServiceProvider]
 [Singleton<IMiniPubSub, MiniPubSub>()]
-[Singleton(typeof(ILanguageChooser), typeof(LanguageChooser))]
 [Singleton<IDataTemplate, ViewLocator>]
 [Singleton(typeof(NotepadFactory))]
-[Singleton<IGetService, GetServiceHost>]
+[Singleton<IInjector, InjectorHost>]
 [Singleton<IAppSettingsReader, AppSettingsReader>]
 [Singleton(typeof(SolutionViewModel))]
 [Singleton(typeof(MainWindowViewModel))]

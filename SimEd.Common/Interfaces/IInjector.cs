@@ -1,6 +1,6 @@
 ﻿namespace SimEd.Common.Interfaces;
 
-public interface IGetService
+public interface IInjector
 {
     public T GetService<T>();
 }

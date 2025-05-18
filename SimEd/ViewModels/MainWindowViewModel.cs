@@ -20,7 +20,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
     private readonly IFactory? _factory;
     private IRootDock? _layout;
 
-    public IGetService Provider { get; }
+    public IInjector Provider { get; }
 
     public IRootDock? Layout
     {
@@ -28,7 +28,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         set => SetProperty(ref _layout, value);
     }
 
-    public MainWindowViewModel(IGetService serviceProvider, IMiniPubSub pubSub)
+    public MainWindowViewModel(IInjector serviceProvider, IMiniPubSub pubSub)
     {
         _pubSub = pubSub;
         Provider = serviceProvider;
@@ -49,20 +49,9 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         AddFileViewModel(untitledFileViewModel);
     }
 
-    private Encoding GetEncoding(string path)
-    {
-        using var reader = new StreamReader(path, Encoding.Default, true);
-        if (reader.Peek() >= 0)
-        {
-            reader.Read();
-        }
-
-        return reader.CurrentEncoding;
-    }
-
     private async Task<FileViewModel> OpenFileViewModel(string path)
     {
-        var encoding = GetEncoding(path);
+        var encoding = FileTools.GetEncoding(path);
         string text = await File.ReadAllTextAsync(path, encoding);
         string title = Path.GetFileName(path);
         return new FileViewModel()

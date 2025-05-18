@@ -2,7 +2,7 @@
 
 namespace SimEd.IoC.Interfaces;
 
-public interface IGetServiceHost : IGetService
+public interface IInjectorHost : IInjector
 {
     public ServiceProvider Provider { get; set; }
 }

@@ -5,6 +5,8 @@ namespace SimEd.Common.Interfaces;
 public interface IMiniPubSub
 {
     void Publish<T>(T value);
+    TR Query<T, TR>(T value);
+    void Command<T>(T value);
     MiniPubSub AddEvent<T>(Action<T> handler);
     IMiniPubSub AddCommand<T>(Action<T> handler);
     IMiniPubSub AddQuery<T, TR>(Func<T, TR> handler);

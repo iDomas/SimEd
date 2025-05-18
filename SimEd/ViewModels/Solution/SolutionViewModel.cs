@@ -18,13 +18,28 @@ public class SolutionViewModel : Tool, IViewAware
     public SolutionView View { get; set; }
 
     public SolutionItem? Selected { get; set; }
+    private string _solutionPath = Directory.GetCurrentDirectory();
 
     public SolutionViewModel(IMiniPubSub pubSub)
     {
         _pubSub = pubSub;
+        _pubSub.AddCommand<ChangeSolutionFolderCommand>(OnChangeSolutionFolder);
     }
 
-    private string _solutionPath = Directory.GetCurrentDirectory();
+    private void OnChangeSolutionFolder(ChangeSolutionFolderCommand changeSolutionFolder)
+    {
+        SolutionPath = changeSolutionFolder.FolderName;
+        var dirInfo = new DirectoryInfo(SolutionPath);
+        if (!dirInfo.Exists)
+        {
+            return;
+        }
+
+        var root = SolutionItemScanner.ScanDirectory(dirInfo);
+        Nodes.Clear();
+        Nodes.AddRange(root.Children);
+    }
+
 
     public void SelectedInSolutionDoubleTapped(object sender, TappedEventArgs e)
     {
@@ -39,8 +54,10 @@ public class SolutionViewModel : Tool, IViewAware
         get => _solutionPath;
         set
         {
-            SetProperty(ref _solutionPath, value);
-            UpdateView();
+            if (SetProperty(ref _solutionPath, value))
+            {
+                _pubSub.Command(new ChangeSolutionFolderCommand(value));
+            }
         }
     }
 
@@ -68,19 +85,6 @@ public class SolutionViewModel : Tool, IViewAware
     public void SetControl(Control control)
     {
         View = (SolutionView)control;
-        UpdateView();
-    }
-
-    private void UpdateView()
-    {
-        var dirInfo = new DirectoryInfo(SolutionPath);
-        if (!dirInfo.Exists)
-        {
-            return;
-        }
-
-        var root = SolutionItemScanner.ScanDirectory(dirInfo);
-        Nodes.Clear();
-        Nodes.AddRange(root.Children);
+        _pubSub.Command(new ChangeSolutionFolderCommand(SolutionPath));
     }
 }

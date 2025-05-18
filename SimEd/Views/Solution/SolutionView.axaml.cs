@@ -6,7 +6,7 @@ namespace SimEd.Views.Solution;
 
 public partial class SolutionView : UserControl
 {
-    public SolutionViewModel ViewModel => (SolutionViewModel)DataContext;
+    public SolutionViewModel ViewModel => (SolutionViewModel)DataContext!;
     public SolutionView()
     {
         InitializeComponent();

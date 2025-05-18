@@ -5,11 +5,11 @@ namespace SimEd.IoC.Tools;
 
 internal static class ServicesTools
 {
-    public static IGetService Initialize()
+    public static IInjector Initialize()
     {
         ServiceProvider serviceProvider = new ServiceProvider();
-        IGetServiceHost getService = (IGetServiceHost)serviceProvider.GetService<IGetService>();
-        getService.Provider = serviceProvider;
-        return getService;
+        IInjectorHost injector = (IInjectorHost)serviceProvider.GetService<IInjector>();
+        injector.Provider = serviceProvider;
+        return injector;
     }
 }

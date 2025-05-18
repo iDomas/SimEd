@@ -11,19 +11,19 @@ namespace SimEd;
 
 public partial class App : Application
 {
-    private IGetService _serviceProvider;
+    private IInjector _injector;
 
     public override void Initialize()
     {
-        _serviceProvider = ServicesTools.Initialize();
-        DataTemplates.Add(_serviceProvider.GetService<IDataTemplate>());
+        _injector = ServicesTools.Initialize();
+        DataTemplates.Add(_injector.GetService<IDataTemplate>());
         AvaloniaXamlLoader.Load(this);
         base.Initialize();
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
-        MainWindowViewModel mainWindowViewModel = _serviceProvider.GetService<MainWindowViewModel>();
+        MainWindowViewModel mainWindowViewModel = _injector.GetService<MainWindowViewModel>();
 
         switch (ApplicationLifetime)
         {

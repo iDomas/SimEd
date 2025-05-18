@@ -13,13 +13,13 @@ namespace SimEd.ViewModels;
 
 public class NotepadFactory : Factory
 {
-    private readonly IGetService _getService;
+    private readonly IInjector _injector;
     private IRootDock? _rootDock;
     private IDocumentDock? _documentDock;
 
-    public NotepadFactory(IGetService getService)
+    public NotepadFactory(IInjector injector)
     {
-        _getService = getService;
+        _injector = injector;
     }
 
     public override IDocumentDock CreateDocumentDock() => new FilesDocumentDock();
@@ -34,7 +34,7 @@ public class NotepadFactory : Factory
             Encoding = Encoding.Default.WebName
         };
 
-        SolutionViewModel solutionViewModel = _getService.GetService<SolutionViewModel>();
+        SolutionViewModel solutionViewModel = _injector.GetService<SolutionViewModel>();
         solutionViewModel.Id = "Solution";
         solutionViewModel.Title = "Solution";
         

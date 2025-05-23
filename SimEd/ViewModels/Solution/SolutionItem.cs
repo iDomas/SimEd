@@ -2,17 +2,12 @@
 
 namespace SimEd.ViewModels.Solution;
 
-public record SolutionItem(string Name, string Path, ObservableCollection<SolutionItem> Children)
+public record SolutionItem(string Name, string Path, ObservableCollection<SolutionItem> Children, bool IsExpanded)
 {
     public SolutionItem AddChild(string name, string path)
     {
-        var child = new SolutionItem(name, path, []);
+        SolutionItem child = new SolutionItem(name, path, [], true);
         Children.Add(child);
         return child;
-    }
-
-    public void ClearChildren()
-    {
-        Children.Clear();
     }
 }

@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using Avalonia.Rendering;
 using Avalonia.VisualTree;
 
 namespace SimEd.ViewModels;
@@ -42,7 +43,7 @@ internal static class StorageService
 
         if (Application.Current?.ApplicationLifetime is ISingleViewApplicationLifetime { MainView: { } mainView })
         {
-            var visualRoot = mainView.GetVisualRoot();
+            IRenderRoot? visualRoot = mainView.GetVisualRoot();
             if (visualRoot is TopLevel topLevel)
             {
                 return topLevel.StorageProvider;

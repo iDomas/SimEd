@@ -4,14 +4,18 @@ internal class SolutionItemScanner
 {
     public static SolutionItem ScanDirectory(DirectoryInfo dirInfo)
     {
-        var result = new SolutionItem(dirInfo.Name, dirInfo.FullName, []);
-        foreach (var directory in dirInfo.GetDirectories())
+        DirectoryInfo[] directoryInfos = dirInfo.GetDirectories();
+        FileInfo[] fileInfos = dirInfo.GetFiles();
+        int countChildren = directoryInfos.Length + fileInfos.Length;
+        SolutionItem result = new SolutionItem(dirInfo.Name, dirInfo.FullName, [], countChildren != 0);
+
+        foreach (DirectoryInfo directory in directoryInfos)
         {
-            var child = ScanDirectory(directory);
+            SolutionItem child = ScanDirectory(directory);
             result.Children.Add(child);
         }
 
-        foreach (var file in dirInfo.GetFiles())
+        foreach (FileInfo file in fileInfos)
         {
             result.AddChild(file.Name, file.FullName);
         }

@@ -10,13 +10,6 @@ namespace SimEd;
 [StaticViewLocator]
 public partial class ViewLocator : IDataTemplate
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public ViewLocator(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
     public Control? Build(object? data)
     {
         if (data is null)
@@ -24,9 +17,9 @@ public partial class ViewLocator : IDataTemplate
             return null;
         }
 
-        var type = data.GetType();
+        Type type = data.GetType();
 
-        if (!s_views.TryGetValue(type, out var func))
+        if (!s_views.TryGetValue(type, out Func<Control>? func))
         {
             throw new Exception($"Unable to create view for type: {type}");
         }

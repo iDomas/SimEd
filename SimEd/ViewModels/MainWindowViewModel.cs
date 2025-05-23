@@ -7,7 +7,9 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Dock.Model.Controls;
 using Dock.Model.Core;
+using Dock.Model.Core.Events;
 using SimEd.Common.Interfaces;
+using SimEd.Events;
 using SimEd.Interfaces;
 using SimEd.ViewModels.Documents;
 using SimEd.ViewModels.Solution;
@@ -38,9 +40,19 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         if (Layout is { })
         {
             _factory?.InitLayout(Layout);
+            _factory.ActiveDockableChanged += OnChangedFocus;
         }
 
-        _pubSub.AddEvent<FileIsOpened>(OnFileOpened);
+        _pubSub.AddEventHandler<FileIsOpened>(OnFileOpened);
+    }
+
+    private void OnChangedFocus(object? sender, ActiveDockableChangedEventArgs e)
+    {
+        FileViewModel? fileViewModel = e.Dockable as FileViewModel;
+        if (fileViewModel is { })
+        {
+            _pubSub.Publish(new ChangedFocusedTab(fileViewModel));
+        }
     }
 
     private async void OnFileOpened(FileIsOpened fileIsOpened)
@@ -56,7 +68,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     private async Task<FileViewModel?> OpenFileViewModel(string path)
     {
-        if (TryFindAlreadyOpenedTab(path, out var fileViewModel))
+        if (TryFindAlreadyOpenedTab(path, out FileViewModel fileViewModel))
         {
             return null;
         }
@@ -66,7 +78,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
             return null;
         }
 
-        var encoding = FileTools.GetEncoding(path);
+        Encoding encoding = FileTools.GetEncoding(path);
         string text = await File.ReadAllTextAsync(path, encoding);
         string title = Path.GetFileName(path);
         return new FileViewModel()
@@ -87,8 +99,8 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
             return false;
         }
 
-        var allFiles = files.VisibleDockables.Select(x => x as FileViewModel).Where(x => x != null).ToArray();
-        var foundFileViewModel = allFiles.FirstOrDefault(x => x.Path == path);
+        FileViewModel?[] allFiles = files.VisibleDockables.Select(x => x as FileViewModel).Where(x => x != null).ToArray();
+        FileViewModel? foundFileViewModel = allFiles.FirstOrDefault(x => x.Path == path);
         if (foundFileViewModel is { })
         {
             files.ActiveDockable = foundFileViewModel;
@@ -101,8 +113,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     private void SaveFileViewModel(FileViewModel fileViewModel)
     {
-        File.WriteAllText((string)fileViewModel.Path, (string?)fileViewModel.Text,
-            Encoding.GetEncoding((string)fileViewModel.Encoding));
+        File.WriteAllText(fileViewModel.Path, fileViewModel.Text ?? "", Encoding.GetEncoding(fileViewModel.Encoding));
     }
 
     private void UpdateFileViewModel(FileViewModel fileViewModel, string path)
@@ -113,7 +124,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     private void AddFileViewModel(FileViewModel fileViewModel)
     {
-        var files = _factory?.GetDockable<IDocumentDock>("Files");
+        IDocumentDock? files = _factory?.GetDockable<IDocumentDock>("Files");
         if (Layout is { } && files is { })
         {
             _factory?.AddDockable(files, fileViewModel);
@@ -124,11 +135,11 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     private FileViewModel? GetFileViewModel()
     {
-        var files = _factory?.GetDockable<IDocumentDock>("Files");
+        IDocumentDock? files = _factory?.GetDockable<IDocumentDock>("Files");
         return files?.ActiveDockable as FileViewModel;
     }
 
-    private FileViewModel GetUntitledFileViewModel()
+    private static FileViewModel GetUntitledFileViewModel()
     {
         return new FileViewModel
         {
@@ -152,19 +163,19 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     public void FileNew()
     {
-        var untitledFileViewModel = GetUntitledFileViewModel();
+        FileViewModel untitledFileViewModel = GetUntitledFileViewModel();
         AddFileViewModel(untitledFileViewModel);
     }
 
     public async void FileOpen()
     {
-        var storageProvider = StorageService.GetStorageProvider();
+        IStorageProvider? storageProvider = StorageService.GetStorageProvider();
         if (storageProvider is null)
         {
             return;
         }
 
-        var results = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
+        IReadOnlyList<IStorageFile> results = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
         {
             Title = "Open layout",
             FileTypeFilter = GetOpenOpenLayoutFileTypes(),
@@ -173,9 +184,9 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
         if (results is { Count: > 0 })
         {
-            foreach (var storageFile in results)
+            foreach (IStorageFile storageFile in results)
             {
-                var path = storageFile.Path.AbsolutePath;
+                string path = storageFile.Path.AbsolutePath;
                 if (!string.IsNullOrEmpty(path))
                 {
                     FileViewModel untitledFileViewModel = await OpenFileViewModel(path);
@@ -195,16 +206,17 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     public async void FileSave()
     {
-        if (GetFileViewModel() is { } fileViewModel)
+        if (GetFileViewModel() is not { } fileViewModel)
         {
-            if (string.IsNullOrEmpty(fileViewModel.Path))
-            {
-                await FileSaveAsImpl(fileViewModel);
-            }
-            else
-            {
-                SaveFileViewModel(fileViewModel);
-            }
+            return;
+        }
+        if (string.IsNullOrEmpty(fileViewModel.Path))
+        {
+            await FileSaveAsImpl(fileViewModel);
+        }
+        else
+        {
+            SaveFileViewModel(fileViewModel);
         }
     }
 
@@ -218,7 +230,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     private async Task FileSaveAsImpl(FileViewModel fileViewModel)
     {
-        var dlg = new SaveFileDialog
+        SaveFileDialog dlg = new SaveFileDialog
         {
             Filters = new List<FileDialogFilter>
             {
@@ -228,13 +240,13 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
             InitialFileName = fileViewModel.Title,
             DefaultExtension = "txt"
         };
-        var window = GetWindow();
+        Window? window = GetWindow();
         if (window is null)
         {
             return;
         }
 
-        var result = await dlg.ShowAsync(window);
+        string? result = await dlg.ShowAsync(window);
         if (result is { })
         {
             if (!string.IsNullOrEmpty(result))
@@ -269,12 +281,12 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
             IEnumerable<IStorageItem>? result = e.Data.GetFiles();
             if (result is { })
             {
-                foreach (var storageItem in result)
+                foreach (IStorageItem storageItem in result)
                 {
-                    var path = storageItem.Path.AbsolutePath;
+                    string path = storageItem.Path.AbsolutePath;
                     if (!string.IsNullOrEmpty(path))
                     {
-                        var untitledFileViewModel = await OpenFileViewModel(path);
+                        FileViewModel? untitledFileViewModel = await OpenFileViewModel(path);
                         AddFileViewModel(untitledFileViewModel);
                     }
                 }

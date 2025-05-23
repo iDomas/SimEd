@@ -30,19 +30,19 @@ public class MiniPubSub : IMiniPubSub
         tasksToExecute.Call(value);
     }
 
-    public MiniPubSub AddEvent<T>(Action<T> handler)
+    public IMiniPubSub AddEventHandler<T>(Action<T> handler)
     {
         GetHandlesOfType<T>().Add(handler);
         return this;
     }
 
-    public IMiniPubSub AddCommand<T>(Action<T> handler)
+    public IMiniPubSub AddCommandHandler<T>(Action<T> handler)
     {
         GetCommandOfType<T>().Set(handler);
         return this;
     }
 
-    public IMiniPubSub AddQuery<T, TR>(Func<T, TR> handler)
+    public IMiniPubSub AddQueryHandler<T, TR>(Func<T, TR> handler)
     {
         GetQueryOfType<T, TR>().Set(handler);
         return this;

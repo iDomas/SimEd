@@ -19,7 +19,7 @@ public class FilesDocumentDock : DocumentDock
             return;
         }
 
-        var document = new FileViewModel()
+        FileViewModel document = new FileViewModel()
         {
             Path = string.Empty,
             Title = "Untitled",

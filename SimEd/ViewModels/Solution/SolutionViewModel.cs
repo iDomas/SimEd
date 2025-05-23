@@ -5,7 +5,9 @@ using Avalonia.Platform.Storage;
 using AvaloniaEdit.Utils;
 using Dock.Model.Mvvm.Controls;
 using SimEd.Common.Interfaces;
+using SimEd.Events;
 using SimEd.Interfaces;
+using SimEd.ViewModels.Documents;
 using SimEd.Views.Solution;
 
 namespace SimEd.ViewModels.Solution;
@@ -17,25 +19,62 @@ public class SolutionViewModel : Tool, IViewAware
     public ObservableCollection<SolutionItem> Nodes { get; set; } = [];
     public SolutionView View { get; set; }
 
-    public SolutionItem? Selected { get; set; }
+    public SolutionItem? Selected
+    {
+        get => _selected;
+        set => SetProperty(ref _selected, value);
+    }
+
     private string _solutionPath = Directory.GetCurrentDirectory();
+    private SolutionItem? _selected;
 
     public SolutionViewModel(IMiniPubSub pubSub)
     {
         _pubSub = pubSub;
-        _pubSub.AddCommand<ChangeSolutionFolderCommand>(OnChangeSolutionFolder);
+        _pubSub.AddCommandHandler<ChangeSolutionFolderCommand>(OnChangeSolutionFolder);
+        _pubSub.AddEventHandler<ChangedFocusedTab>(OnChangedFocusedTab);
+    }
+
+    private void OnChangedFocusedTab(ChangedFocusedTab focused)
+    {
+        string selectedPath = Selected?.Path ?? "";
+        if (selectedPath == focused.FileViewModel.Path)
+        {
+            return;
+        }
+
+        SelectFocusedFile(Nodes, focused.FileViewModel);
+    }
+
+    private bool SelectFocusedFile(Collection<SolutionItem> nodes, FileViewModel focusedFileViewModel)
+    {
+        foreach (SolutionItem solutionItem in nodes)
+        {
+            if (SelectFocusedFile(solutionItem.Children, focusedFileViewModel))
+            {
+                return true;
+            }
+
+            if (solutionItem.Path == focusedFileViewModel.Path)
+            {
+                this.Selected = solutionItem;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void OnChangeSolutionFolder(ChangeSolutionFolderCommand changeSolutionFolder)
     {
         SolutionPath = changeSolutionFolder.FolderName;
-        var dirInfo = new DirectoryInfo(SolutionPath);
+        DirectoryInfo dirInfo = new DirectoryInfo(SolutionPath);
         if (!dirInfo.Exists)
         {
             return;
         }
 
-        var root = SolutionItemScanner.ScanDirectory(dirInfo);
+        SolutionItem root = SolutionItemScanner.ScanDirectory(dirInfo);
         Nodes.Clear();
         Nodes.AddRange(root.Children);
     }
@@ -63,13 +102,13 @@ public class SolutionViewModel : Tool, IViewAware
 
     public async void OnSolutionChosen()
     {
-        var storageProvider = StorageService.GetStorageProvider();
+        IStorageProvider? storageProvider = StorageService.GetStorageProvider();
         if (storageProvider is null)
         {
             return;
         }
 
-        var results = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+        IReadOnlyList<IStorageFolder> results = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
         {
             Title = "Open Solution",
             AllowMultiple = false
@@ -77,7 +116,7 @@ public class SolutionViewModel : Tool, IViewAware
 
         if (results is { Count: > 0 })
         {
-            var selectedDir = results[0].Path;
+            Uri selectedDir = results[0].Path;
             SolutionPath = new DirectoryInfo(selectedDir.AbsolutePath).FullName;
         }
     }

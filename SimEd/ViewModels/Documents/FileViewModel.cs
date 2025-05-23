@@ -45,9 +45,9 @@ public class FileViewModel : Document, IViewAware
 
     private void UpdateView()
     {
-        var registryOptions = new RegistryOptions(ThemeName.Light);
-        var textMateInstallation = MainControl.MainTextEditor.InstallTextMate(registryOptions);
-        var extension = ExtensionOfFile(this.Path);
+        RegistryOptions registryOptions = new RegistryOptions(ThemeName.Light);
+        TextMate.Installation? textMateInstallation = MainControl.MainTextEditor.InstallTextMate(registryOptions);
+        string extension = ExtensionOfFile(this.Path);
         if (string.IsNullOrEmpty(extension))
         {
             extension = ".txt";

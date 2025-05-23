@@ -22,7 +22,7 @@ public class AppSettingsReader : IAppSettingsReader
     public async Task Write(AppSettings settings)
     {
         FileSystemHelper.CreateDirectory(AppCustomDirectories.SettingsDirectory);
-        var jsonString = JsonSerializer.Serialize(
+        string jsonString = JsonSerializer.Serialize(
             settings, CodeGen.SourceGenerationContext.Default.AppSettings);
 
         await File.WriteAllTextAsync(SettingsJsonPath, jsonString);

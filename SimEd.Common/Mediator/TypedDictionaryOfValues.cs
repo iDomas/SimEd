@@ -7,8 +7,8 @@ public class TypedDictionaryOfValues<TValue>
 
     public int IndexOf<T>()
     {
-        var key = typeof(T).Name;
-        if (_mapTaskId.TryGetValue(key, out var index))
+        string key = typeof(T).Name;
+        if (_mapTaskId.TryGetValue(key, out int index))
         {
             return index;
         }
@@ -18,14 +18,14 @@ public class TypedDictionaryOfValues<TValue>
 
     public TValue UpdatedValue<TAdded>(Func<TValue> create)
     {
-        var index = IndexOf<TAdded>();
+        int index = IndexOf<TAdded>();
         if (index != -1)
         {
             return Values[index];
         }
 
         TValue addedValue = create();
-        var actualIndex = Values.Count;
+        int actualIndex = Values.Count;
         _mapTaskId.Add(typeof(TAdded).Name, actualIndex);
         Values.Add(addedValue);
         return addedValue;

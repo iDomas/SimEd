@@ -23,14 +23,6 @@
     <vm:MainWindowViewModel />
   </Design.DataContext>
   <Panel Margin="{Binding #MainWindowView.OffScreenMargin}">
-    <Panel Height="30" HorizontalAlignment="Center" VerticalAlignment="Top">
-      <Label Content="SimEd"
-             Margin="4,0,4,0"
-             FontSize="14"
-             FontWeight="Normal"
-             VerticalAlignment="Center"
-             VerticalContentAlignment="Center" />
-    </Panel>
     <Panel Margin="{Binding #MainWindowView.WindowDecorationMargin}">
       <views1:MainView />
     </Panel>

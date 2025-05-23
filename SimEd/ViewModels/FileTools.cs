@@ -6,7 +6,7 @@ public static class FileTools
 {
     public static Encoding GetEncoding(string path)
     {
-        using var reader = new StreamReader(path, Encoding.Default, true);
+        using StreamReader reader = new StreamReader(path, Encoding.Default, true);
         if (reader.Peek() >= 0)
         {
             reader.Read();

@@ -43,6 +43,12 @@
             ItemsSource="{Binding Nodes}"
             DoubleTapped="SelectedInSolutionDoubleTapped"
             >
+            <TreeView.Styles>
+                <Style Selector="TreeViewItem" x:DataType="solution:SolutionItem">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                </Style>
+            </TreeView.Styles>
+
             <TreeView.ItemTemplate>
                 <TreeDataTemplate ItemsSource="{Binding Children}">
                     <TextBlock Text="{Binding Name}" />

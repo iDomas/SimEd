@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using CommunityToolkit.Mvvm.Input;
 using Dock.Avalonia.Controls;
 using Dock.Model.Controls;
 using Dock.Model.Core;
@@ -49,7 +50,6 @@ public class NotepadFactory : Factory
             ),
             CanCreateDocument = true
         };
-
         ProportionalDock solutionDock = new()
         {
             Proportion = 0.2,
@@ -98,6 +98,11 @@ public class NotepadFactory : Factory
         _documentDock = documentDock;
         _rootDock = rootDock;
         return rootDock;
+    }
+
+    private void OnNavigate()
+    {
+        
     }
 
     public override void InitLayout(IDockable layout)

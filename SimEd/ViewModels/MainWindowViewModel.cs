@@ -45,12 +45,27 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     private async void OnFileOpened(FileIsOpened fileIsOpened)
     {
-        FileViewModel untitledFileViewModel = await OpenFileViewModel(fileIsOpened.FileItem.Path);
+        FileViewModel? untitledFileViewModel = await OpenFileViewModel(fileIsOpened.FileItem.Path);
+        if (untitledFileViewModel is null)
+        {
+            return;
+        }
+
         AddFileViewModel(untitledFileViewModel);
     }
 
-    private async Task<FileViewModel> OpenFileViewModel(string path)
+    private async Task<FileViewModel?> OpenFileViewModel(string path)
     {
+        if (TryFindAlreadyOpenedTab(path, out var fileViewModel))
+        {
+            return null;
+        }
+
+        if (!File.Exists(path))
+        {
+            return null;
+        }
+
         var encoding = FileTools.GetEncoding(path);
         string text = await File.ReadAllTextAsync(path, encoding);
         string title = Path.GetFileName(path);
@@ -61,6 +76,27 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
             Text = text,
             Encoding = encoding.WebName
         };
+    }
+
+    private bool TryFindAlreadyOpenedTab(string path, out FileViewModel fileViewModel)
+    {
+        IDocumentDock? files = _factory?.GetDockable<IDocumentDock>("Files");
+        fileViewModel = null;
+        if (files is null || files.VisibleDockables is null)
+        {
+            return false;
+        }
+
+        var allFiles = files.VisibleDockables.Select(x => x as FileViewModel).Where(x => x != null).ToArray();
+        var foundFileViewModel = allFiles.FirstOrDefault(x => x.Path == path);
+        if (foundFileViewModel is { })
+        {
+            files.ActiveDockable = foundFileViewModel;
+            fileViewModel = foundFileViewModel;
+            return true;
+        }
+
+        return false;
     }
 
     private void SaveFileViewModel(FileViewModel fileViewModel)
@@ -230,11 +266,12 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
     {
         if (e.Data.Contains(DataFormats.Files))
         {
-            var result = e.Data.GetFileNames();
+            IEnumerable<IStorageItem>? result = e.Data.GetFiles();
             if (result is { })
             {
-                foreach (var path in result)
+                foreach (var storageItem in result)
                 {
+                    var path = storageItem.Path.AbsolutePath;
                     if (!string.IsNullOrEmpty(path))
                     {
                         var untitledFileViewModel = await OpenFileViewModel(path);

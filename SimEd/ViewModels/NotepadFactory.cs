@@ -1,13 +1,10 @@
-﻿using System.Text;
-using CommunityToolkit.Mvvm.Input;
-using Dock.Avalonia.Controls;
+﻿using Dock.Avalonia.Controls;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Mvvm;
 using Dock.Model.Mvvm.Controls;
 using SimEd.Common.Interfaces;
 using SimEd.ViewModels.Docks;
-using SimEd.ViewModels.Documents;
 using SimEd.ViewModels.Solution;
 
 namespace SimEd.ViewModels;
@@ -27,14 +24,6 @@ public class NotepadFactory : Factory
 
     public override IRootDock CreateLayout()
     {
-        FileViewModel untitledFileViewModel = new()
-        {
-            Path = string.Empty,
-            Title = "Untitled",
-            Text = "",
-            Encoding = Encoding.Default.WebName
-        };
-
         SolutionViewModel solutionViewModel = _injector.GetService<SolutionViewModel>();
         solutionViewModel.Id = "Solution";
         solutionViewModel.Title = "Solution";

@@ -2,6 +2,7 @@
 
 public interface IAppSettingsReader
 {
-    Task<AppSettings> Read();
-    Task Write(AppSettings settings);
+    AppSettings Read();
+    void Write(AppSettings settings);
+    void Update(Action<AppSettings> settingsChanged);
 }

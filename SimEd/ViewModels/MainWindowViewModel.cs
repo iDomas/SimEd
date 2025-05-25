@@ -11,8 +11,8 @@ using Dock.Model.Core.Events;
 using SimEd.Common.Interfaces;
 using SimEd.Events;
 using SimEd.Interfaces;
+using SimEd.Models;
 using SimEd.ViewModels.Documents;
-using SimEd.ViewModels.Solution;
 
 namespace SimEd.ViewModels;
 
@@ -30,7 +30,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         set => SetProperty(ref _layout, value);
     }
 
-    public MainWindowViewModel(IInjector serviceProvider, IMiniPubSub pubSub)
+    public MainWindowViewModel(IInjector serviceProvider, IMiniPubSub pubSub, IAppSettingsReader appSettingsReader)
     {
         _pubSub = pubSub;
         Provider = serviceProvider;
@@ -44,6 +44,8 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         }
 
         _pubSub.AddEventHandler<FileIsOpened>(OnFileOpened);
+        AppSettings settings = appSettingsReader.Read();
+        _pubSub.Publish(new ChangeSolutionFolderCommand(settings.Path));
     }
 
     private void OnChangedFocus(object? sender, ActiveDockableChangedEventArgs e)
@@ -296,7 +298,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         }
     }
 
-    private Window? GetWindow()
+    private static Window? GetWindow()
     {
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
         {

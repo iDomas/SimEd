@@ -6,25 +6,32 @@ public class AppSettingsReader : IAppSettingsReader
 {
     string SettingsJsonPath => Path.Combine(AppCustomDirectories.SettingsDirectory, "appsettings.json");
 
-    public async Task<AppSettings> Read()
+    public AppSettings Read()
     {
         if (!File.Exists(SettingsJsonPath))
         {
             return new AppSettings();
         }
 
-        string jsonString = await File.ReadAllTextAsync(SettingsJsonPath).ConfigureAwait(false);
+        string jsonString = File.ReadAllText(SettingsJsonPath);
         AppSettings appSettings =
-            JsonSerializer.Deserialize<AppSettings>(jsonString, CodeGen.SourceGenerationContext.Default.AppSettings)!;
+            JsonSerializer.Deserialize<AppSettings>(jsonString, CodeGen.SourceGenerationContext.Default.AppSettings)?? new AppSettings();
         return appSettings;
     }
 
-    public async Task Write(AppSettings settings)
+    public void Write(AppSettings settings)
     {
         FileSystemHelper.CreateDirectory(AppCustomDirectories.SettingsDirectory);
         string jsonString = JsonSerializer.Serialize(
             settings, CodeGen.SourceGenerationContext.Default.AppSettings);
 
-        await File.WriteAllTextAsync(SettingsJsonPath, jsonString);
+        File.WriteAllText(SettingsJsonPath, jsonString);
+    }
+
+    public void Update(Action<AppSettings> settingsChanged)
+    {
+        var appSettings = Read();
+        settingsChanged.Invoke(appSettings);
+        Write(appSettings);
     }
 }

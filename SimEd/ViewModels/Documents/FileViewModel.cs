@@ -11,8 +11,8 @@ public class FileViewModel : Document, IViewAware
 {
     public FileViewModel()
     {
-        
     }
+
     public string Path
     {
         get => _path;
@@ -30,11 +30,8 @@ public class FileViewModel : Document, IViewAware
         get => _encoding;
         set => SetProperty(ref _encoding, value);
     }
+
     public FileView MainControl { get; set; }
-    
-    private string _path = string.Empty;
-    private string _text = string.Empty;
-    private string _encoding = string.Empty;
 
     public void SetControl(Control control)
     {
@@ -42,6 +39,11 @@ public class FileViewModel : Document, IViewAware
 
         UpdateView();
     }
+
+
+    private string _path = string.Empty;
+    private string _text = string.Empty;
+    private string _encoding = string.Empty;
 
     private void UpdateView()
     {
@@ -52,6 +54,7 @@ public class FileViewModel : Document, IViewAware
         {
             extension = ".txt";
         }
+
         Language csharpLanguage = registryOptions.GetLanguageByExtension(extension);
         string scopeName = registryOptions.GetScopeByLanguageId(csharpLanguage?.Id ?? "");
         textMateInstallation.SetGrammar(scopeName);
@@ -63,6 +66,7 @@ public class FileViewModel : Document, IViewAware
         {
             return string.Empty;
         }
+
         FileInfo fileInfo = new FileInfo(fileName);
         if (!fileInfo.Exists)
         {
@@ -71,5 +75,4 @@ public class FileViewModel : Document, IViewAware
 
         return fileInfo.Extension;
     }
-
 }

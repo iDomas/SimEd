@@ -7,6 +7,7 @@ using Dock.Model.Mvvm.Controls;
 using SimEd.Common.Interfaces;
 using SimEd.Events;
 using SimEd.Interfaces;
+using SimEd.Models;
 using SimEd.ViewModels.Documents;
 using SimEd.Views.Solution;
 
@@ -15,6 +16,7 @@ namespace SimEd.ViewModels.Solution;
 public class SolutionViewModel : Tool, IViewAware
 {
     private readonly IMiniPubSub _pubSub;
+    private readonly IAppSettingsReader _appSettingsReader;
 
     public ObservableCollection<SolutionItem> Nodes { get; set; } = [];
     public SolutionView View { get; set; }
@@ -28,12 +30,15 @@ public class SolutionViewModel : Tool, IViewAware
     private string _solutionPath = Directory.GetCurrentDirectory();
     private SolutionItem? _selected;
 
-    public SolutionViewModel(IMiniPubSub pubSub)
+    public SolutionViewModel(IMiniPubSub pubSub, IAppSettingsReader appSettingsReader)
     {
         _pubSub = pubSub;
-        _pubSub.AddCommandHandler<ChangeSolutionFolderCommand>(OnChangeSolutionFolder);
+        _appSettingsReader = appSettingsReader;
+
+        _pubSub.AddEventHandler<ChangeSolutionFolderCommand>(OnChangeSolutionFolder);
         _pubSub.AddEventHandler<ChangedFocusedTab>(OnChangedFocusedTab);
     }
+
 
     private void OnChangedFocusedTab(ChangedFocusedTab focused)
     {
@@ -68,7 +73,12 @@ public class SolutionViewModel : Tool, IViewAware
     private void OnChangeSolutionFolder(ChangeSolutionFolderCommand changeSolutionFolder)
     {
         SolutionPath = changeSolutionFolder.FolderName;
-        DirectoryInfo dirInfo = new DirectoryInfo(SolutionPath);
+        if (string.IsNullOrEmpty(SolutionPath))
+        {
+            return;
+        }
+
+        DirectoryInfo dirInfo = new (SolutionPath);
         if (!dirInfo.Exists)
         {
             return;
@@ -95,7 +105,8 @@ public class SolutionViewModel : Tool, IViewAware
         {
             if (SetProperty(ref _solutionPath, value))
             {
-                _pubSub.Command(new ChangeSolutionFolderCommand(value));
+                _pubSub.Publish(new ChangeSolutionFolderCommand(value));
+                _appSettingsReader.Update(appSettings => { appSettings.Path = SolutionPath; });
             }
         }
     }
@@ -108,11 +119,12 @@ public class SolutionViewModel : Tool, IViewAware
             return;
         }
 
-        IReadOnlyList<IStorageFolder> results = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
-        {
-            Title = "Open Solution",
-            AllowMultiple = false
-        });
+        IReadOnlyList<IStorageFolder> results = await storageProvider.OpenFolderPickerAsync(
+            new FolderPickerOpenOptions()
+            {
+                Title = "Open Solution",
+                AllowMultiple = false
+            });
 
         if (results is { Count: > 0 })
         {
@@ -124,6 +136,6 @@ public class SolutionViewModel : Tool, IViewAware
     public void SetControl(Control control)
     {
         View = (SolutionView)control;
-        _pubSub.Command(new ChangeSolutionFolderCommand(SolutionPath));
+        _pubSub.Publish(new ChangeSolutionFolderCommand(SolutionPath));
     }
 }

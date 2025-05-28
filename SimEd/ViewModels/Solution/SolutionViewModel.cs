@@ -77,14 +77,17 @@ public class SolutionViewModel : Tool, IViewAware
         {
             return;
         }
-
+        
         DirectoryInfo dirInfo = new (SolutionPath);
         if (!dirInfo.Exists)
         {
             return;
         }
 
-        SolutionItem root = SolutionItemScanner.ScanDirectory(dirInfo);
+        
+        GitIgnoreScanner scanner = new GitIgnoreScanner();
+        scanner.ScanDirectory(dirInfo);
+        SolutionItem root = SolutionItemScanner.ScanDirectory(dirInfo, scanner);
         Nodes.Clear();
         Nodes.AddRange(root.Children);
     }

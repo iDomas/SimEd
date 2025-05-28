@@ -2,21 +2,28 @@
 
 internal class SolutionItemScanner
 {
-    public static SolutionItem ScanDirectory(DirectoryInfo dirInfo)
+    public static SolutionItem ScanDirectory(DirectoryInfo dirInfo, GitIgnoreScanner scanner)
     {
         DirectoryInfo[] directoryInfos = dirInfo.GetDirectories();
         FileInfo[] fileInfos = dirInfo.GetFiles();
-        int countChildren = directoryInfos.Length + fileInfos.Length;
-        SolutionItem result = new SolutionItem(dirInfo.Name, dirInfo.FullName, [], countChildren != 0);
+        SolutionItem result = new SolutionItem(dirInfo.Name, dirInfo.FullName, [], false);
 
         foreach (DirectoryInfo directory in directoryInfos)
         {
-            SolutionItem child = ScanDirectory(directory);
+            if (scanner.IgnorePath(directory.FullName))
+            {
+                continue;
+            }
+            SolutionItem child = ScanDirectory(directory, scanner);
             result.Children.Add(child);
         }
 
         foreach (FileInfo file in fileInfos)
         {
+            if (scanner.IgnorePath(file.FullName))
+            {
+                continue;
+            }
             result.AddChild(file.Name, file.FullName);
         }
 

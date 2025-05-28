@@ -25,7 +25,7 @@ public class GitIgnoreScanner
         this.IgnoredFiles = BuildFilters(goodFiles);
     }
 
-    private Func<string, bool>[] BuildFilters(string[] goodFiles)
+    private static Func<string, bool>[] BuildFilters(string[] goodFiles)
     {
         List<Func<string, bool>> filters = [];
         foreach (var file in goodFiles)
@@ -43,15 +43,7 @@ public class GitIgnoreScanner
     }
 
     public bool IgnorePath(string directoryFullName)
-    {
-        foreach (Func<string, bool> ignoredFileFilter in IgnoredFiles)
-        {
-            if (ignoredFileFilter(directoryFullName))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
+        => IgnoredFiles
+            .AsValueEnumerable()
+            .Any(ignoredFileFilter => ignoredFileFilter(directoryFullName));
 }

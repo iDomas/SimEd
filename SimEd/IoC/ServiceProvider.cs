@@ -5,6 +5,7 @@ using SimEd.Common.Mediator;
 using SimEd.IoC.Tools;
 using SimEd.Models;
 using SimEd.ViewModels;
+using SimEd.ViewModels.Documents;
 using SimEd.ViewModels.Solution;
 
 namespace SimEd.IoC;
@@ -17,6 +18,7 @@ namespace SimEd.IoC;
 [Singleton<IAppSettingsReader, AppSettingsReader>]
 [Singleton(typeof(SolutionViewModel))]
 [Singleton(typeof(MainWindowViewModel))]
+[Transient<FileViewModel>()]
 public partial class ServiceProvider
 {
 }

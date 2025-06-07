@@ -56,4 +56,10 @@ public class MiniPubSub : IMiniPubSub
 
     public Query<T, TR> GetQueryOfType<T, TR>()
         => (Query<T, TR>)_mapQuery.UpdatedValue<T>(() => new Query<T, TR>());
+
+    public void RemoveEventHandler<T>(Action<T> onZoomChanged)
+    {
+        var handler = GetHandlesOfType<T>();
+        handler.Remove(onZoomChanged);
+    }
 }

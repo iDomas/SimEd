@@ -15,4 +15,5 @@ public interface IMiniPubSub
     HandlerList<T> GetHandlesOfType<T>();
     Command<T> GetCommandOfType<T>();
     Query<T, TR> GetQueryOfType<T, TR>();
+    void RemoveEventHandler<T>(Action<T> onZoomChanged);
 }

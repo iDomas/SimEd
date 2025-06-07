@@ -1,4 +1,6 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
+using SimEd.Models.Settings;
 
 namespace SimEd.Models;
 
@@ -6,7 +8,7 @@ public class AppSettingsReader : IAppSettingsReader
 {
     string SettingsJsonPath => Path.Combine(AppCustomDirectories.SettingsDirectory, "appsettings.json");
 
-    public AppSettings Read()
+    public AppSettings Get()
     {
         if (!File.Exists(SettingsJsonPath))
         {
@@ -14,23 +16,27 @@ public class AppSettingsReader : IAppSettingsReader
         }
 
         string jsonString = File.ReadAllText(SettingsJsonPath);
-        AppSettings appSettings =
-            JsonSerializer.Deserialize<AppSettings>(jsonString, CodeGen.SourceGenerationContext.Default.AppSettings)?? new AppSettings();
-        return appSettings;
+        if (string.IsNullOrWhiteSpace(jsonString))
+        {
+            return new AppSettings();
+        }
+
+        AppSettings? settings =
+            JsonSerializer.Deserialize<AppSettings>(jsonString, CodeGen.SourceGenerationContext.Default.AppSettings);
+        return settings ?? new AppSettings();
     }
 
     public void Write(AppSettings settings)
     {
         FileSystemHelper.CreateDirectory(AppCustomDirectories.SettingsDirectory);
-        string jsonString = JsonSerializer.Serialize(
-            settings, CodeGen.SourceGenerationContext.Default.AppSettings);
-
+        JsonTypeInfo<AppSettings> defaultAppSettings = CodeGen.SourceGenerationContext.Default.AppSettings;
+        string jsonString = JsonSerializer.Serialize(settings, defaultAppSettings);
         File.WriteAllText(SettingsJsonPath, jsonString);
     }
 
     public void Update(Action<AppSettings> settingsChanged)
     {
-        var appSettings = Read();
+        var appSettings = Get();
         settingsChanged.Invoke(appSettings);
         Write(appSettings);
     }

@@ -1,14 +1,18 @@
 ﻿using System.Text;
 using CommunityToolkit.Mvvm.Input;
 using Dock.Model.Mvvm.Controls;
+using SimEd.Common.Interfaces;
 using SimEd.ViewModels.Documents;
 
 namespace SimEd.ViewModels.Docks;
 
 public class FilesDocumentDock : DocumentDock
 {
-    public FilesDocumentDock()
+    private readonly IInjector _injector;
+
+    public FilesDocumentDock(IInjector injector)
     {
+        _injector = injector;
         CreateDocument = new RelayCommand(CreateNewDocument);
     }
 
@@ -19,13 +23,11 @@ public class FilesDocumentDock : DocumentDock
             return;
         }
 
-        FileViewModel document = new FileViewModel()
-        {
-            Path = string.Empty,
-            Title = "Untitled",
-            Text = "",
-            Encoding = Encoding.Default.WebName
-        };
+        FileViewModel document = _injector.GetService<FileViewModel>();
+        document.Path = string.Empty;
+        document.Title = "Untitled";
+        document.Text = "";
+        document.Encoding = Encoding.Default.WebName;
 
         Factory?.AddDockable(this, document);
         Factory?.SetActiveDockable(document);

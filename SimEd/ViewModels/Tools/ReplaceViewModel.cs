@@ -24,14 +24,12 @@ public class ReplaceViewModel : Tool
 
     public void ReplaceNext()
     {
-        if (Context is IRootDock root && root.ActiveDockable is IDock active)
+        if (Context is not IRootDock root || root.ActiveDockable is not IDock active) return;
+        if (active.Factory?.FindDockable(active, (d) => d.Id == "Files") is IDock files)
         {
-            if (active.Factory?.FindDockable(active, (d) => d.Id == "Files") is IDock files)
+            if (files.ActiveDockable is FileViewModel fileViewModel)
             {
-                if (files.ActiveDockable is FileViewModel fileViewModel)
-                {
-                    // TODO: 
-                }
+                // TODO: 
             }
         }
     }

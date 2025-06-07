@@ -1,8 +1,10 @@
-﻿namespace SimEd.Models;
+﻿using SimEd.Models.Settings;
+
+namespace SimEd.Models;
 
 public interface IAppSettingsReader
 {
-    AppSettings Read();
+    AppSettings Get();
     void Write(AppSettings settings);
     void Update(Action<AppSettings> settingsChanged);
 }

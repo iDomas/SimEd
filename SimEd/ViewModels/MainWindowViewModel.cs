@@ -12,6 +12,7 @@ using SimEd.Common.Interfaces;
 using SimEd.Events;
 using SimEd.Interfaces;
 using SimEd.Models;
+using SimEd.Models.Settings;
 using SimEd.ViewModels.Documents;
 
 namespace SimEd.ViewModels;
@@ -44,7 +45,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         }
 
         _pubSub.AddEventHandler<FileIsOpened>(OnFileOpened);
-        AppSettings settings = appSettingsReader.Read();
+        AppSettings settings = appSettingsReader.Get();
         _pubSub.Publish(new ChangeSolutionFolderCommand(settings.Path));
     }
 
@@ -83,13 +84,12 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         Encoding encoding = FileTools.GetEncoding(path);
         string text = await File.ReadAllTextAsync(path, encoding);
         string title = Path.GetFileName(path);
-        return new FileViewModel()
-        {
-            Path = path,
-            Title = title,
-            Text = text,
-            Encoding = encoding.WebName
-        };
+        var openFileViewModel = Provider.GetService<FileViewModel>();
+        openFileViewModel.Path = path;
+        openFileViewModel.Title = title;
+        openFileViewModel.Text = text;
+        openFileViewModel.Encoding = encoding.WebName;
+        return openFileViewModel;
     }
 
     private bool TryFindAlreadyOpenedTab(string path, out FileViewModel fileViewModel)
@@ -101,16 +101,17 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
             return false;
         }
 
-        FileViewModel?[] allFiles = files.VisibleDockables.Select(x => x as FileViewModel).Where(x => x != null).ToArray();
+        FileViewModel?[] allFiles =
+            files.VisibleDockables.Select(x => x as FileViewModel).Where(x => x != null).ToArray();
         FileViewModel? foundFileViewModel = allFiles.FirstOrDefault(x => x.Path == path);
-        if (foundFileViewModel is { })
+        if (foundFileViewModel is null)
         {
-            files.ActiveDockable = foundFileViewModel;
-            fileViewModel = foundFileViewModel;
-            return true;
+            return false;
         }
 
-        return false;
+        files.ActiveDockable = foundFileViewModel;
+        fileViewModel = foundFileViewModel;
+        return true;
     }
 
     private void SaveFileViewModel(FileViewModel fileViewModel)
@@ -141,25 +142,26 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         return files?.ActiveDockable as FileViewModel;
     }
 
-    private static FileViewModel GetUntitledFileViewModel()
+    private FileViewModel GetUntitledFileViewModel()
     {
-        return new FileViewModel
-        {
-            Path = string.Empty,
-            Title = "Untitled",
-            Text = "",
-            Encoding = Encoding.Default.WebName
-        };
+        var untitledFileViewModel = Provider.GetService<FileViewModel>();
+        untitledFileViewModel.Path = string.Empty;
+        untitledFileViewModel.Title = "Untitled";
+        untitledFileViewModel.Text = "";
+        untitledFileViewModel.Encoding = Encoding.Default.WebName;
+        return untitledFileViewModel;
     }
 
     public void CloseLayout()
     {
-        if (Layout is IDock dock)
+        if (Layout is not IDock dock)
         {
-            if (dock.Close.CanExecute(null))
-            {
-                dock.Close.Execute(null);
-            }
+            return;
+        }
+
+        if (dock.Close.CanExecute(null))
+        {
+            dock.Close.Execute(null);
         }
     }
 
@@ -212,6 +214,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         {
             return;
         }
+
         if (string.IsNullOrEmpty(fileViewModel.Path))
         {
             await FileSaveAsImpl(fileViewModel);

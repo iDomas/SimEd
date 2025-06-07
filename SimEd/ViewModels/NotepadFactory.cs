@@ -20,7 +20,7 @@ public class NotepadFactory : Factory
         _injector = injector;
     }
 
-    public override IDocumentDock CreateDocumentDock() => new FilesDocumentDock();
+    public override IDocumentDock CreateDocumentDock() => new FilesDocumentDock(_injector);
 
     public override IRootDock CreateLayout()
     {
@@ -28,7 +28,7 @@ public class NotepadFactory : Factory
         solutionViewModel.Id = "Solution";
         solutionViewModel.Title = "Solution";
         
-        FilesDocumentDock documentDock = new()
+        FilesDocumentDock documentDock = new(_injector)
         {
             Id = "Files",
             Title = "Files",

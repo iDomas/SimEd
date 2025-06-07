@@ -17,4 +17,9 @@ public class HandlerList<T> : BaseHandler
             handler(arg);
         }
     }
+
+    public void Remove<T>(Action<T> action)
+    {
+        Handlers = Handlers.Where(handler => ReferenceEquals(handler, action)).ToArray();
+    }
 }

@@ -1,7 +1,10 @@
 ﻿using Avalonia.Controls;
 using AvaloniaEdit.TextMate;
 using Dock.Model.Mvvm.Controls;
+using SimEd.Common.Interfaces;
+using SimEd.Events;
 using SimEd.Interfaces;
+using SimEd.Models;
 using SimEd.Views.Documents;
 using TextMateSharp.Grammars;
 
@@ -9,9 +12,24 @@ namespace SimEd.ViewModels.Documents;
 
 public class FileViewModel : Document, IViewAware
 {
-    public FileViewModel()
+    private readonly IMiniPubSub _pubSub;
+    private readonly IAppSettingsReader _settingsReader;
+
+    public FileViewModel(IMiniPubSub pubSub, IAppSettingsReader settingsReader)
     {
+        _pubSub = pubSub;
+        _settingsReader = settingsReader;
+        _pubSub.AddEventHandler<ZoomFontLevelChanged>(OnZoomChanged);
     }
+
+    public override bool OnClose()
+    {
+        _pubSub.RemoveEventHandler<ZoomFontLevelChanged>(OnZoomChanged);
+        return base.OnClose();
+    }
+
+    private void OnZoomChanged(ZoomFontLevelChanged zoomFontLevel)
+        => FontSize = zoomFontLevel.FontSize;
 
     public string Path
     {
@@ -32,6 +50,17 @@ public class FileViewModel : Document, IViewAware
     }
 
     public FileView MainControl { get; set; }
+
+    public int FontSize
+    {
+        get => _settingsReader.Get().FontSize;
+        set
+        {
+            if (value == FontSize) return;
+            _settingsReader.Update(s => s.FontSize = value);
+            OnPropertyChanged();
+        }
+    }
 
     public void SetControl(Control control)
     {
@@ -67,12 +96,27 @@ public class FileViewModel : Document, IViewAware
             return string.Empty;
         }
 
-        FileInfo fileInfo = new FileInfo(fileName);
-        if (!fileInfo.Exists)
-        {
-            return string.Empty;
-        }
+        FileInfo fileInfo = new(fileName);
+        return fileInfo.Exists
+            ? fileInfo.Extension
+            : string.Empty;
+    }
 
-        return fileInfo.Extension;
+    public void PushUpdateSettings(int deltaY)
+    {
+        _settingsReader.Update(appSettings =>
+        {
+            var fontSize = appSettings.FontSize;
+
+            fontSize = deltaY > 0 
+                ? fontSize + 1 
+                : fontSize > 1 
+                    ? fontSize - 1 
+                    : 1;
+
+            appSettings.FontSize = fontSize;
+
+            _pubSub.Publish<ZoomFontLevelChanged>(new(fontSize));
+        });
     }
 }

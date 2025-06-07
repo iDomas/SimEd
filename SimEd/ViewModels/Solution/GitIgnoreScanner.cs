@@ -36,7 +36,6 @@ public class GitIgnoreScanner
         return filters.ToArray();
     }
 
-
     private void Clear()
     {
         IgnoredFiles = [];

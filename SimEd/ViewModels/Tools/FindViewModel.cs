@@ -17,15 +17,18 @@ public class FindViewModel : Tool
 
     public void FindNext()
     {
-        if (Context is IRootDock root && root.ActiveDockable is IDock active)
+        if (Context is not IRootDock root || root.ActiveDockable is not IDock active)
         {
-            if (active.Factory?.FindDockable(active, (d) => d.Id == "Files") is IDock files)
-            {
-                if (files.ActiveDockable is FileViewModel fileViewModel)
-                {
-                    // TODO: 
-                }
-            }
+            return;
+        }
+
+        if (active.Factory?.FindDockable(active, (d) => d.Id == "Files") is not IDock files)
+        {
+            return;
+        }
+        if (files.ActiveDockable is FileViewModel fileViewModel)
+        {
+            // TODO: 
         }
     }
 }

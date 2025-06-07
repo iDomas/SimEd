@@ -1,4 +1,4 @@
-namespace SimEd.Models;
+namespace SimEd.Models.Settings;
 
 public static class AppCustomDirectories
 {

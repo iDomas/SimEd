@@ -1,8 +1,8 @@
 namespace SimEd.Models;
 
-static class FileSystemHelper
+internal static class FileSystemHelper
 {
-    public static void CreateDirectory(string path)
+    public static void CreateDirectory(this string path)
     {
         if (!Directory.Exists(path))
         {

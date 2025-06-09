@@ -41,7 +41,7 @@
     </MenuItem>
     <MenuItem Header="_Help">
       <MenuItem Header="Get _Help" />
-      <MenuItem Header="SimEd - _About" />
+      <MenuItem Header="SimEd - _About" Command="{Binding HelpAbout}" />
     </MenuItem>
   </Menu>
 </UserControl>

@@ -62,7 +62,7 @@ public class SolutionViewModel : Tool, IViewAware
 
             if (solutionItem.Path == focusedFileViewModel.Path)
             {
-                this.Selected = solutionItem;
+                Selected = solutionItem;
                 return true;
             }
         }

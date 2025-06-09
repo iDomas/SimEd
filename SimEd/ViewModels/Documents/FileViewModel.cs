@@ -78,7 +78,7 @@ public class FileViewModel : Document, IViewAware
     {
         RegistryOptions registryOptions = new RegistryOptions(ThemeName.Light);
         TextMate.Installation? textMateInstallation = MainControl.MainTextEditor.InstallTextMate(registryOptions);
-        string extension = ExtensionOfFile(this.Path);
+        string extension = ExtensionOfFile(Path);
         if (string.IsNullOrEmpty(extension))
         {
             extension = ".txt";
@@ -106,7 +106,7 @@ public class FileViewModel : Document, IViewAware
     {
         _settingsReader.Update(appSettings =>
         {
-            var fontSize = appSettings.FontSize;
+            int fontSize = appSettings.FontSize;
 
             fontSize = deltaY > 0 
                 ? fontSize + 1 

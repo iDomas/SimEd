@@ -14,6 +14,7 @@ using SimEd.Interfaces;
 using SimEd.Models;
 using SimEd.Models.Settings;
 using SimEd.ViewModels.Documents;
+using SimEd.Views.Help;
 
 namespace SimEd.ViewModels;
 
@@ -84,7 +85,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         Encoding encoding = FileTools.GetEncoding(path);
         string text = await File.ReadAllTextAsync(path, encoding);
         string title = Path.GetFileName(path);
-        var openFileViewModel = Provider.GetService<FileViewModel>();
+        FileViewModel openFileViewModel = Provider.GetService<FileViewModel>();
         openFileViewModel.Path = path;
         openFileViewModel.Title = title;
         openFileViewModel.Text = text;
@@ -144,7 +145,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     private FileViewModel GetUntitledFileViewModel()
     {
-        var untitledFileViewModel = Provider.GetService<FileViewModel>();
+        FileViewModel untitledFileViewModel = Provider.GetService<FileViewModel>();
         untitledFileViewModel.Path = string.Empty;
         untitledFileViewModel.Title = "Untitled";
         untitledFileViewModel.Text = "";
@@ -270,6 +271,12 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         }
     }
 
+    public void HelpAbout()
+    {
+        HelpAboutWindow window = new ();
+        window.ShowDialog(GetWindow()!);
+    }
+
     public void DragOver(object? sender, DragEventArgs e)
     {
         if (!e.Data.Contains(DataFormats.Files))
@@ -281,23 +288,28 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     public async void Drop(object? sender, DragEventArgs e)
     {
-        if (e.Data.Contains(DataFormats.Files))
-        {
-            IEnumerable<IStorageItem>? result = e.Data.GetFiles();
-            if (result is { })
-            {
-                foreach (IStorageItem storageItem in result)
-                {
-                    string path = storageItem.Path.AbsolutePath;
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        FileViewModel? untitledFileViewModel = await OpenFileViewModel(path);
-                        AddFileViewModel(untitledFileViewModel);
-                    }
-                }
-            }
+        if (!e.Data.Contains(DataFormats.Files)) return;
+        await HandleDropFiles(e);
 
-            e.Handled = true;
+        e.Handled = true;
+    }
+
+    private async Task HandleDropFiles(DragEventArgs e)
+    {
+        IEnumerable<IStorageItem>? result = e.Data.GetFiles();
+        if (result is null)
+        {
+            return;
+        }
+
+        foreach (IStorageItem storageItem in result)
+        {
+            string path = storageItem.Path.AbsolutePath;
+            if (!string.IsNullOrEmpty(path))
+            {
+                FileViewModel? untitledFileViewModel = await OpenFileViewModel(path);
+                AddFileViewModel(untitledFileViewModel);
+            }
         }
     }
 

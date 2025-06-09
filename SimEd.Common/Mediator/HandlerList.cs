@@ -18,6 +18,8 @@ public class HandlerList<T> : BaseHandler
         }
     }
 
-    public void Remove(Action<T> action) => Handlers = Handlers.Where(handler 
-        => ReferenceEquals(handler, action)).ToArray();
+    public void Remove(Action<T> action) 
+        => Handlers = Handlers
+            .Where(handler => ReferenceEquals(handler, action))
+            .ToArray();
 }

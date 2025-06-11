@@ -13,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{71CFD8
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{845DA406-ACB6-4D16-B31F-20880348210A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MakeWindowsInstallers", "MakeWindowsInstallers\MakeWindowsInstallers.csproj", "{F3CFBF87-1453-4A1F-A45D-6E3AC0104568}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,5 +39,12 @@ Global
 		{59FA2ADF-42D7-4C3C-B7DB-5B03449B3536}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59FA2ADF-42D7-4C3C-B7DB-5B03449B3536}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59FA2ADF-42D7-4C3C-B7DB-5B03449B3536}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3CFBF87-1453-4A1F-A45D-6E3AC0104568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3CFBF87-1453-4A1F-A45D-6E3AC0104568}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3CFBF87-1453-4A1F-A45D-6E3AC0104568}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3CFBF87-1453-4A1F-A45D-6E3AC0104568}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F3CFBF87-1453-4A1F-A45D-6E3AC0104568} = {845DA406-ACB6-4D16-B31F-20880348210A}
 	EndGlobalSection
 EndGlobal

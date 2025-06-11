@@ -11,14 +11,12 @@ using SimEd.ViewModels.Solution;
 namespace SimEd.IoC;
 
 [ServiceProvider]
-[Singleton<IMiniPubSub, MiniPubSub>()]
+[Singleton<IMiniPubSub, MiniPubSub>]
 [Singleton<IDataTemplate, ViewLocator>]
 [Singleton(typeof(NotepadFactory))]
 [Singleton<IInjector, InjectorHost>]
 [Singleton<IAppSettingsReader, AppSettingsReader>]
 [Singleton(typeof(SolutionViewModel))]
 [Singleton(typeof(MainWindowViewModel))]
-[Transient<FileViewModel>()]
-public partial class ServiceProvider
-{
-}
+[Transient<FileViewModel>]
+public partial class ServiceProvider;

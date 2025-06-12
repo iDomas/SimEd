@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics;
-using System.IO.Compression;
 
-internal class ProjectBundler
+namespace MakeWindowsInstallers;
+
+internal static class ProjectBundler
 {
-    public async Task Bundle(string project, string platformName)
+    public static async Task Bundle(string project, string platformName)
     {
         string arguments = $"publish {project} -r {platformName} -c Release";
         Process p = Process.Start(new ProcessStartInfo

@@ -1,14 +1,20 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-ProjectBundler bundler = new ProjectBundler();
+using MakeWindowsInstallers;
 
-Directory.SetCurrentDirectory(@"C:\oss\SimEd\");
+string pathOfSolution = OsDetector.GetParentOfSolution();
 
-string[] platforms = ["win-arm64", "win-x64", "win-x86"];
+Directory.SetCurrentDirectory(pathOfSolution);
 
-await Task.WhenAll(platforms.Select(async platform =>
+OsKind platformKind = OsDetector.DetectOSKind;
+Dictionary<OsKind, string[]> platformsDict = new()
 {
-    await bundler.Bundle("SimEd", platform).ConfigureAwait(false);
-})).ConfigureAwait(false);
+    { OsKind.Windows, ["win-arm64", "win-x64", "win-x86"] },
+    { OsKind.Linux, ["linux-x64"] },
+    { OsKind.MacOs, ["macos-arm64"] }
+};
+string[] platforms = platformsDict[platformKind];
 
-Console.WriteLine("Hello, World!");
+await Task.WhenAll(
+        platforms.Select(async platform => { await ProjectBundler.Bundle("SimEd", platform).ConfigureAwait(false); }))
+    .ConfigureAwait(false);

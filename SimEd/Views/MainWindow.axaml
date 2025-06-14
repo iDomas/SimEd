@@ -18,13 +18,14 @@
         Title="SimEd" Height="600" Width="900"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="PreferSystemChrome"
+        KeyDown="OnKeyDownHandler"
         ids:DockProperties.IsDragEnabled="True" ids:DockProperties.IsDropEnabled="True">
-  <Design.DataContext>
-    <vm:MainWindowViewModel />
-  </Design.DataContext>
-  <Panel Margin="{Binding #MainWindowView.OffScreenMargin}">
-    <Panel Margin="{Binding #MainWindowView.WindowDecorationMargin}">
-      <views1:MainView />
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+    <Panel Margin="{Binding #MainWindowView.OffScreenMargin}">
+        <Panel Margin="{Binding #MainWindowView.WindowDecorationMargin}">
+            <views1:MainView />
+        </Panel>
     </Panel>
-  </Panel>
 </Window>

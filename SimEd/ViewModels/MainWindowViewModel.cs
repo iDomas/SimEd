@@ -14,6 +14,7 @@ using SimEd.Interfaces;
 using SimEd.Models;
 using SimEd.Models.Settings;
 using SimEd.ViewModels.Documents;
+using SimEd.Views;
 using SimEd.Views.Help;
 
 namespace SimEd.ViewModels;
@@ -321,5 +322,11 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         }
 
         return null;
+    }
+
+    public void OnShowGenericFinder()
+    {
+        
+        _pubSub.Publish(new ShowGenericFinder(GetWindow()!));
     }
 }

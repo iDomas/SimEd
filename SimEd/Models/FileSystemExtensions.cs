@@ -1,6 +1,6 @@
 namespace SimEd.Models;
 
-internal static class FileSystemHelper
+internal static class FileSystemExtensions
 {
     public static void CreateDirectory(this string path)
     {

@@ -28,7 +28,7 @@ public class AppSettingsReader : IAppSettingsReader
 
     public void Write(AppSettings settings)
     {
-        FileSystemHelper.CreateDirectory(AppCustomDirectories.SettingsDirectory);
+        AppCustomDirectories.SettingsDirectory.CreateDirectory();
         JsonTypeInfo<AppSettings> defaultAppSettings = CodeGen.SourceGenerationContext.Default.AppSettings;
         string jsonString = JsonSerializer.Serialize(settings, defaultAppSettings);
         File.WriteAllText(SettingsJsonPath, jsonString);

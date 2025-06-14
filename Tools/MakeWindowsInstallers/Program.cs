@@ -6,7 +6,7 @@ string pathOfSolution = OsDetector.GetParentOfSolution();
 
 Directory.SetCurrentDirectory(pathOfSolution);
 
-OsKind platformKind = OsDetector.DetectOSKind;
+OsKind platformKind = OsDetector.DetectOsKind;
 Dictionary<OsKind, string[]> platformsDict = new()
 {
     { OsKind.Windows, ["win-arm64", "win-x64", "win-x86"] },

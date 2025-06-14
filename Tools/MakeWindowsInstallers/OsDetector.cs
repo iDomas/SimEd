@@ -2,7 +2,7 @@
 
 internal static class OsDetector
 {
-    internal static OsKind DetectOSKind
+    internal static OsKind DetectOsKind
         => Environment.OSVersion.Platform switch
         {
             PlatformID.Unix => OsKind.Linux,

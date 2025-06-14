@@ -15,6 +15,10 @@ Dictionary<OsKind, string[]> platformsDict = new()
 };
 string[] platforms = platformsDict[platformKind];
 
+
 await Task.WhenAll(
-        platforms.Select(async platform => { await ProjectBundler.Bundle("SimEd", platform).ConfigureAwait(false); }))
+        platforms.Select(async platform =>
+        {
+            await ProjectBundler.Bundle( pathOfSolution, "SimEd", platform).ConfigureAwait(false);
+        }))
     .ConfigureAwait(false);

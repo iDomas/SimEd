@@ -4,7 +4,7 @@ namespace MakeWindowsInstallers;
 
 internal static class ProjectBundler
 {
-    public static async Task Bundle(string project, string platformName)
+    public static async Task Bundle(string solutionPath, string project, string platformName)
     {
         string arguments = $"publish {project} -r {platformName} -c Release";
         Process p = Process.Start(new ProcessStartInfo
@@ -25,7 +25,7 @@ internal static class ProjectBundler
             .Where(f => allowedExtensions.Contains(Path.GetExtension(f)))
             .ToArray();
         
-        string outputZipFile = $"{project}_{platformName}.zip";
+        string outputZipFile = Path.Combine(solutionPath, $"{project}_{platformName}.zip");
         File.Delete(outputZipFile);
         ZipFileCreator.CreateZipFile(outputZipFile, filesToZip);
     }

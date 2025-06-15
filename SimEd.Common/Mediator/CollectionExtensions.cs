@@ -17,4 +17,19 @@ public static class CollectionExtensions
         => items.Length == 0
             ? []
             : Array.ConvertAll(items, x => selector(x));
+
+    public static TDest[] SelectToArray<T, TDest>(this IList<T> items, Func<T, TDest> selector)
+    {
+        if (items.Count == 0)
+        {
+            return [];
+        }
+
+        TDest[] result = new TDest[items.Count];
+        for (int i = 0; i < items.Count; i++)
+        {
+            result[i] = selector(items[i]);
+        }
+        return result;
+    }
 }

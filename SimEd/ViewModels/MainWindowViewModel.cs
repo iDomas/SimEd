@@ -10,11 +10,11 @@ using Dock.Model.Core;
 using Dock.Model.Core.Events;
 using SimEd.Common.Interfaces;
 using SimEd.Events;
+using SimEd.Extensions;
 using SimEd.Interfaces;
 using SimEd.Models;
 using SimEd.Models.Settings;
 using SimEd.ViewModels.Documents;
-using SimEd.Views;
 using SimEd.Views.Help;
 
 namespace SimEd.ViewModels;
@@ -50,6 +50,94 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         AppSettings settings = appSettingsReader.Get();
         _pubSub.Publish(new ChangeSolutionFolderCommand(settings.Path));
     }
+
+
+    public void CloseLayout()
+    {
+        if (Layout is not IDock dock)
+        {
+            return;
+        }
+
+        if (dock.Close.CanExecute(null))
+        {
+            dock.Close.Execute(null);
+        }
+    }
+
+    public void FileNew()
+    {
+        FileViewModel untitledFileViewModel = GetUntitledFileViewModel();
+        AddFileViewModel(untitledFileViewModel);
+    }
+
+    public async void FileOpen()
+    {
+        IStorageProvider? storageProvider = StorageService.GetStorageProvider();
+        if (storageProvider is null)
+        {
+            return;
+        }
+
+        IReadOnlyList<IStorageFile> results = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
+        {
+            Title = "Open layout",
+            FileTypeFilter = GetOpenOpenLayoutFileTypes(),
+            AllowMultiple = false
+        });
+
+        if (results is not { Count: > 0 })
+        {
+            return;
+        }
+
+        foreach (IStorageFile storageFile in results)
+        {
+            string path = storageFile.Path.AbsolutePath;
+            if (string.IsNullOrEmpty(path))
+            {
+                continue;
+            }
+
+            FileViewModel untitledFileViewModel = await OpenFileViewModel(path);
+            AddFileViewModel(untitledFileViewModel);
+        }
+    }
+
+    public void FileExit()
+    {
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+        {
+            desktopLifetime.Shutdown();
+        }
+    }
+
+    public void HelpAbout()
+    {
+        HelpAboutWindow window = new();
+        window.ShowDialog(GetWindow()!);
+    }
+
+    public void DragOver(object? sender, DragEventArgs e)
+    {
+        if (!e.Data.Contains(DataFormats.Files))
+        {
+            e.DragEffects = DragDropEffects.None;
+            e.Handled = true;
+        }
+    }
+
+    public async void Drop(object? sender, DragEventArgs e)
+    {
+        if (!e.Data.Contains(DataFormats.Files))
+        {
+            return;
+        }
+
+        await HandleDropFiles(e);
+        e.Handled = true;
+    }
+
 
     private void OnChangedFocus(object? sender, ActiveDockableChangedEventArgs e)
     {
@@ -97,7 +185,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
     private bool TryFindAlreadyOpenedTab(string path, out FileViewModel fileViewModel)
     {
         IDocumentDock? files = _factory?.GetDockable<IDocumentDock>("Files");
-        fileViewModel = null;
+        fileViewModel = null!;
         if (files is null || files.VisibleDockables is null)
         {
             return false;
@@ -154,54 +242,6 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         return untitledFileViewModel;
     }
 
-    public void CloseLayout()
-    {
-        if (Layout is not IDock dock)
-        {
-            return;
-        }
-
-        if (dock.Close.CanExecute(null))
-        {
-            dock.Close.Execute(null);
-        }
-    }
-
-    public void FileNew()
-    {
-        FileViewModel untitledFileViewModel = GetUntitledFileViewModel();
-        AddFileViewModel(untitledFileViewModel);
-    }
-
-    public async void FileOpen()
-    {
-        IStorageProvider? storageProvider = StorageService.GetStorageProvider();
-        if (storageProvider is null)
-        {
-            return;
-        }
-
-        IReadOnlyList<IStorageFile> results = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
-        {
-            Title = "Open layout",
-            FileTypeFilter = GetOpenOpenLayoutFileTypes(),
-            AllowMultiple = false
-        });
-
-        if (results is { Count: > 0 })
-        {
-            foreach (IStorageFile storageFile in results)
-            {
-                string path = storageFile.Path.AbsolutePath;
-                if (!string.IsNullOrEmpty(path))
-                {
-                    FileViewModel untitledFileViewModel = await OpenFileViewModel(path);
-                    AddFileViewModel(untitledFileViewModel);
-                }
-            }
-        }
-    }
-
     private static List<FilePickerFileType> GetOpenOpenLayoutFileTypes() =>
     [
         StorageService.CSharp,
@@ -254,45 +294,11 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         }
 
         string? result = await dlg.ShowAsync(window);
-        if (result is { })
+        if (result is { } && !string.IsNullOrEmpty(result))
         {
-            if (!string.IsNullOrEmpty(result))
-            {
-                UpdateFileViewModel(fileViewModel, result);
-                SaveFileViewModel(fileViewModel);
-            }
+            UpdateFileViewModel(fileViewModel, result);
+            SaveFileViewModel(fileViewModel);
         }
-    }
-
-    public void FileExit()
-    {
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
-        {
-            desktopLifetime.Shutdown();
-        }
-    }
-
-    public void HelpAbout()
-    {
-        HelpAboutWindow window = new ();
-        window.ShowDialog(GetWindow()!);
-    }
-
-    public void DragOver(object? sender, DragEventArgs e)
-    {
-        if (!e.Data.Contains(DataFormats.Files))
-        {
-            e.DragEffects = DragDropEffects.None;
-            e.Handled = true;
-        }
-    }
-
-    public async void Drop(object? sender, DragEventArgs e)
-    {
-        if (!e.Data.Contains(DataFormats.Files)) return;
-        await HandleDropFiles(e);
-
-        e.Handled = true;
     }
 
     private async Task HandleDropFiles(DragEventArgs e)
@@ -306,11 +312,13 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         foreach (IStorageItem storageItem in result)
         {
             string path = storageItem.Path.AbsolutePath;
-            if (!string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
-                FileViewModel? untitledFileViewModel = await OpenFileViewModel(path);
-                AddFileViewModel(untitledFileViewModel);
+                continue;
             }
+
+            FileViewModel? untitledFileViewModel = await OpenFileViewModel(path);
+            AddFileViewModel(untitledFileViewModel);
         }
     }
 
@@ -326,7 +334,6 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
 
     public void OnShowGenericFinder()
     {
-        
         _pubSub.Publish(new ShowGenericFinder(GetWindow()!));
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.IO.Compression;
 
+namespace MakeWindowsInstallers;
+
 public static class ZipFileCreator
 {
     /// <summary>

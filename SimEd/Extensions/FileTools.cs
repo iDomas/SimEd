@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace SimEd.ViewModels;
+namespace SimEd.Extensions;
 
 public static class FileTools
 {

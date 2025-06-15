@@ -22,3 +22,4 @@ await Task.WhenAll(
             await ProjectBundler.Bundle( pathOfSolution, "SimEd", platform).ConfigureAwait(false);
         }))
     .ConfigureAwait(false);
+Console.WriteLine($"Done. Files in path: {pathOfSolution}");

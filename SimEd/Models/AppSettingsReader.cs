@@ -37,7 +37,7 @@ public class AppSettingsReader : IAppSettingsReader
     public void Update(Action<AppSettings> settingsChanged)
     {
         AppSettings appSettings = Get();
-        settingsChanged.Invoke(appSettings);
+        settingsChanged(appSettings);
         Write(appSettings);
     }
 }

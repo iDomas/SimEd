@@ -1,4 +1,6 @@
-﻿internal enum OsKind
+﻿namespace MakeWindowsInstallers;
+
+internal enum OsKind
 {
     Linux,
     Windows,

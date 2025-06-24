@@ -1,4 +1,4 @@
-﻿using SimEd.ViewModels.Solution;
+﻿using SimEd.Models.Languages;
 
 namespace SimEd.Events;
 

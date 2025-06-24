@@ -24,8 +24,9 @@ internal static class DefaultCsScanner
     {
         string[] operators =
         [
-            "class", "record", "interface", "struct", "enum", "delegate", "enum",
-            "public", "protected", "internal", "private",
+            "class", "record", "interface", "struct", "enum", "delegate",
+            "public", "protected", "internal", "private", 
+            "namespace", "using",
             "return", "abstract", "as", "base", "break", "case", "catch",
         ];
         return operators

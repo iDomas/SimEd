@@ -15,8 +15,17 @@ public class CsDeclarationsExtraction : IDeclarationsExtraction
     {
         SimpleScanner scanner = DefaultCsScanner.CsScanner;
 
-        var data = scanner.Tokenize(fileData).ToArray();
+        var data = scanner.Tokenize(fileData, SkipSpaces).ToArray();
 
         return [];
+    }
+
+    private bool SkipSpaces(Token token)
+    {
+        return token.Kind switch
+        {
+            TokenKindsCSharp.Spaces => false,
+            _ => true
+        };
     }
 }

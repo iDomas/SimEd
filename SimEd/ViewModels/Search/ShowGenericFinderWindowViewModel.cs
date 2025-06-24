@@ -40,9 +40,13 @@ public class ShowGenericFinderWindowViewModel : ObservableObject
         var sw = Stopwatch.StartNew();
         SolutionItem[] files = solution.Nodes.Leafs(it => it.Children).ToArray();
         SolutionIndex result = new();
-        foreach (SolutionItem solutionItem in files)
+        List<Task<SolutionIndexItem[]>> tasks = [];
+        tasks.AddRange(files.Select(solutionItem => _extractions.Parse(solutionItem)));
+        await Task.WhenAll(tasks).ConfigureAwait(false);
+
+        foreach (Task<SolutionIndexItem[]> solutionItem in tasks)
         {
-            SolutionIndexItem[] resultedItems = await _extractions.Parse(solutionItem);
+            SolutionIndexItem[] resultedItems = solutionItem.Result;
             result.Items.AddRange(resultedItems);
         }
 

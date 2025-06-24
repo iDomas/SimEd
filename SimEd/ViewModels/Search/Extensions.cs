@@ -1,6 +1,6 @@
 namespace SimEd.ViewModels.Search;
 
-static class Extensions
+internal static class Extensions
 {
     public static IEnumerable<T> Leafs<T>(this IList<T> items, Func<T, IList<T>> childSelector)
     {

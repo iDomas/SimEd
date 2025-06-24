@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SimEd.Models.Languages;
 using SimEd.Models.Languages.Common;
-using SimEd.Models.Languages.Languages;
+using SimEd.Models.Languages.CsharpLang;
 using SimEd.ViewModels.Solution;
 
 namespace SimEd.ViewModels.Search;
@@ -36,14 +37,19 @@ public class ShowGenericFinderWindowViewModel : ObservableObject
 
     private async Task<SolutionIndex> BuildIndex(SolutionViewModel solution)
     {
+        var sw = Stopwatch.StartNew();
         SolutionItem[] files = solution.Nodes.Leafs(it => it.Children).ToArray();
-        SolutionIndex result = new ();
+        SolutionIndex result = new();
         foreach (SolutionItem solutionItem in files)
         {
             SolutionIndexItem[] resultedItems = await _extractions.Parse(solutionItem);
             result.Items.AddRange(resultedItems);
         }
-        
+
+        sw.Stop();
+
+        Console.WriteLine(sw.Elapsed);
+
         return result;
     }
 }

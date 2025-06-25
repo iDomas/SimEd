@@ -24,7 +24,24 @@ public class ShowGenericFinderWindowViewModel : ObservableObject
     public string TypesText
     {
         get => _typesText;
-        set => SetProperty(ref _typesText, value);
+        set
+        {
+            SetProperty(ref _typesText, value);
+            UpdateFilter();
+        }
+    }
+
+    private void UpdateFilter()
+    {
+        var values = this.BuildIndexTask.Result.Items.Where(it => it.Name.Contains(TypesText)).ToArray();;
+        FoundTypes.Clear();
+        foreach (var value in values)
+        {
+            FoundTypes.Add(new FindItemViewModel()
+            {
+                FileName = value.Name
+            });
+        }
     }
 
     public ObservableCollection<FindItemViewModel> FoundTypes { get; private set; } =

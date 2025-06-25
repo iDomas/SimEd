@@ -15,9 +15,40 @@ public class CsDeclarationsExtraction : IDeclarationsExtraction
     {
         SimpleScanner scanner = DefaultCsScanner.CsScanner;
 
-        var data = scanner.Tokenize(fileData, SkipSpaces).ToArray();
+        var tokens = scanner.Tokenize(fileData, SkipSpaces).ToArray();
+        return BuildDeclarationsFromTokens(tokens, fileName);
+    }
 
-        return [];
+    private SolutionIndexItem[] BuildDeclarationsFromTokens(Token[] tokens, string fileName)
+    {
+        var resultList = new List<SolutionIndexItem>();
+        for (var index = 0; index < tokens.Length; index++)
+        {
+            var token = tokens[index];
+            if (!IsDeclaration(token))
+            {
+                continue;
+            }
+
+            resultList.Add(new SolutionIndexItem(tokens[index + 1].GetText(), fileName, token.GetText()));
+        }
+
+        return resultList.ToArray();
+    }
+
+    public static bool IsDeclaration(Token token)
+    {
+        if (token.Kind != TokenKindsCSharp.Reserved)
+        {
+            return false;
+        }
+
+        string tokenText = token.GetText();
+        return tokenText switch
+        {
+            "class" or "struct" or "record" or "interface" or "enum" => true,
+            _ => false
+        };
     }
 
     private bool SkipSpaces(Token token)

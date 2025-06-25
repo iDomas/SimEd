@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{71CFD8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{845DA406-ACB6-4D16-B31F-20880348210A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MakeWindowsInstallers", "Tools\MakeWindowsInstallers\MakeWindowsInstallers.csproj", "{09462C9D-7849-44CD-B297-56AEFD8E1D9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsInstallersCreator", "Tools\WindowsInstallersCreator\WindowsInstallersCreator.csproj", "{09462C9D-7849-44CD-B297-56AEFD8E1D9A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7B8CB690-414A-4307-8934-5B6CD939739A}"
 EndProject

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace MakeWindowsInstallers;
+namespace WindowsInstallersCreator;
 
 internal static class ProjectBundler
 {

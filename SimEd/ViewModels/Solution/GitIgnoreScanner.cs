@@ -27,7 +27,20 @@ public class GitIgnoreScanner
 
     private static Func<string, bool>[] BuildFilters(string[] goodFiles)
     {
-        List<Func<string, bool>> filters = [];
+        List<Func<string, bool>> filters =
+        [
+            x =>
+            {
+                string gitFolder = $"{Path.DirectorySeparatorChar}.git";
+                return x.EndsWith(gitFolder);
+            },
+            x =>
+            {
+                string gitFolder = $"{Path.DirectorySeparatorChar}.gitignore";
+                return x.EndsWith(gitFolder);
+            }
+        ];
+        
         foreach (string file in goodFiles)
         {
             filters.Add((fullFileName) => fullFileName.Contains(file));

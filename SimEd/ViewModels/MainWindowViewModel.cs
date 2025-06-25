@@ -15,7 +15,9 @@ using SimEd.Interfaces;
 using SimEd.Models;
 using SimEd.Models.Settings;
 using SimEd.ViewModels.Documents;
+using SimEd.ViewModels.Search;
 using SimEd.Views.Help;
+using SimEd.Views.Search;
 
 namespace SimEd.ViewModels;
 
@@ -332,8 +334,14 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         return null;
     }
 
-    public void OnShowGenericFinder()
+    public async void OnShowGenericFinder()
     {
         _pubSub.Publish(new ShowGenericFinder(GetWindow()!));
+        
+        ShowGenericFinderWindowView window = new ShowGenericFinderWindowView()
+        {
+            DataContext = Provider.GetService<ShowGenericFinderWindowViewModel>()
+        };
+        await window.ShowDialog<object>(GetWindow());
     }
 }

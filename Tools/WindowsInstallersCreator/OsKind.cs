@@ -1,4 +1,4 @@
-﻿namespace MakeWindowsInstallers;
+﻿namespace WindowsInstallersCreator;
 
 internal enum OsKind
 {

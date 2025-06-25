@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace SimEd.ViewModels.Solution;
+namespace SimEd.Models.Languages;
 
 public record SolutionItem(string Name, string Path, ObservableCollection<SolutionItem> Children, bool IsExpanded)
 {

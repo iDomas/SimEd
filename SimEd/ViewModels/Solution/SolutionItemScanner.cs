@@ -1,4 +1,6 @@
-﻿namespace SimEd.ViewModels.Solution;
+﻿using SimEd.Models.Languages;
+
+namespace SimEd.ViewModels.Solution;
 
 internal class SolutionItemScanner
 {

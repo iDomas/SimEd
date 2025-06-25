@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
-using SimEd.Common.Interfaces;
 using SimEd.ViewModels;
 
 namespace SimEd.Views;

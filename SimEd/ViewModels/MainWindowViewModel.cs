@@ -174,7 +174,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         }
 
         Encoding encoding = FileTools.GetEncoding(path);
-        string text = await File.ReadAllTextAsync(path, encoding);
+        string text = await File.ReadAllTextAsync(path, encoding).ConfigureAwait(false);
         string title = Path.GetFileName(path);
         FileViewModel openFileViewModel = Provider.GetService<FileViewModel>();
         openFileViewModel.Path = path;
@@ -206,9 +206,10 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         return true;
     }
 
-    private void SaveFileViewModel(FileViewModel fileViewModel)
+    private async Task SaveFileViewModel(FileViewModel fileViewModel)
     {
-        File.WriteAllText(fileViewModel.Path, fileViewModel.Text ?? "", Encoding.GetEncoding(fileViewModel.Encoding));
+        await File.WriteAllTextAsync(fileViewModel.Path, fileViewModel.Text ?? "",
+            Encoding.GetEncoding(fileViewModel.Encoding));
     }
 
     private void UpdateFileViewModel(FileViewModel fileViewModel, string path)
@@ -265,7 +266,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         }
         else
         {
-            SaveFileViewModel(fileViewModel);
+            await SaveFileViewModel(fileViewModel);
         }
     }
 
@@ -299,7 +300,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         if (result is { } && !string.IsNullOrEmpty(result))
         {
             UpdateFileViewModel(fileViewModel, result);
-            SaveFileViewModel(fileViewModel);
+            await SaveFileViewModel(fileViewModel).ConfigureAwait(false);
         }
     }
 
@@ -337,7 +338,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
     public async void OnShowGenericFinder()
     {
         _pubSub.Publish(new ShowGenericFinder(GetWindow()!));
-        
+
         ShowGenericFinderWindowView window = new ShowGenericFinderWindowView()
         {
             DataContext = Provider.GetService<ShowGenericFinderWindowViewModel>()

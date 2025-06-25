@@ -10,10 +10,19 @@ internal static class DefaultCsScanner
     {
         string[] operators =
         [
-            ".", ",", ";",
-            "==", "=",
+            ".", ",", ";", ":",
+            "+=", "-=", "*=", "/=",
+            "+", "-", "*", "/",
+            "==",
+            "!", "?",
+            ">=", "<=", "<", ">",
+            "=>",
+            "$",
+            "&&", "&", "||", "|",
             "(", ")",
+            "[", "]",
             "{", "}",
+            "=",
         ];
         return operators
             .Select(c => c.ToCharArray())
@@ -25,7 +34,7 @@ internal static class DefaultCsScanner
         string[] operators =
         [
             "class", "record", "interface", "struct", "enum", "delegate",
-            "public", "protected", "internal", "private", 
+            "public", "protected", "internal", "private",
             "namespace", "using",
             "return", "abstract", "as", "base", "break", "case", "catch",
         ];
@@ -33,6 +42,7 @@ internal static class DefaultCsScanner
             .Select(c => c.ToCharArray())
             .ToArray();
     }
+
     private static SimpleScanner BuildScanner()
     {
         SimpleScanner result = new();
@@ -45,12 +55,57 @@ internal static class DefaultCsScanner
         List<BaseRule> list =
         [
             new LambdaRule(TokenKindsCSharp.Spaces, SpacesMatch),
+            new LambdaRule(TokenKindsCSharp.Eoln, EolnMatch),
+            new LambdaRule(TokenKindsCSharp.Comment, CommentMatch),
+            new LambdaRule(TokenKindsCSharp.QuotedString, StringMatch),
             new LambdaRule(TokenKindsCSharp.Operator, OperatorsMatch),
             new LambdaRule(TokenKindsCSharp.Reserved, ReservedMatch),
             new LambdaRule(TokenKindsCSharp.Identifier, IdentifierMatch),
+            new LambdaRule(TokenKindsCSharp.Number, NumberMatch),
         ];
 
         return list.ToArray();
+    }
+
+    private static int CommentMatch(ArraySegment<char> text)
+    {
+        if (text.Count < 2)
+        {
+            return 0;
+        }
+
+        if (text[0] != '/' || text[1] != '/')
+        {
+            return 0;
+        }
+
+        for (var i = 2; i < text.Count; i++)
+        {
+            if (text[i] == '\n' || text[i] == '\r')
+            {
+                return i + 1;
+            }
+        }
+
+        return text.Count;
+    }
+
+    private static int StringMatch(ArraySegment<char> arg)
+    {
+        if (arg[0] != '"' && arg[0] != '\'')
+        {
+            return 0;
+        }
+
+        for (var i = 1; i < arg.Count; i++)
+        {
+            if (arg[i] == arg[0])
+            {
+                return i + 1;
+            }
+        }
+
+        return arg.Count;
     }
 
     private static readonly char[][] Operators = BuildOperatorsArray();
@@ -91,7 +146,10 @@ internal static class DefaultCsScanner
     }
 
     private static int SpacesMatch(ArraySegment<char> segment)
-        => segment.MatchInSegmentByLambda(c => Char.IsWhiteSpace(c));
+        => segment.MatchInSegmentByLambda(c => c == ' ' || c == '\t');
+
+    private static int EolnMatch(ArraySegment<char> segment)
+        => segment.MatchInSegmentByLambda(c => c == '\n' || c == '\r');
 
 
     private static readonly char[][] ReservedWords = BuildReservedWordsArray();
@@ -114,11 +172,19 @@ internal static class DefaultCsScanner
         return matchReservedLength;
     }
 
+
+    private static int NumberMatch(ArraySegment<char> segment)
+        => segment.MatchInSegmentByLambda(IsMatchForNumber);
+
+
     private static int IdentifierMatch(ArraySegment<char> segment)
         => segment.MatchInSegmentByLambda(IsMatchStartForIdentifier, IsMatchForIdentifier);
 
     static bool IsMatchStartForIdentifier(char c)
         => Char.IsLetter(c) || c == '_';
+
+    static bool IsMatchForNumber(char c)
+        => Char.IsDigit(c);
 
     static bool IsMatchForIdentifier(char c)
         => IsMatchStartForIdentifier(c) || Char.IsDigit(c);

@@ -42,7 +42,11 @@ public class ShowGenericFinderWindowViewModel : ObservableObject
         SolutionIndex result = new();
         List<Task<SolutionIndexItem[]>> tasks = [];
         tasks.AddRange(files.Select(solutionItem => _extractions.Parse(solutionItem)));
-        await Task.WhenAll(tasks).ConfigureAwait(false);
+        //await Task.WhenAll(tasks).ConfigureAwait(false);
+        foreach (var task in tasks)
+        {
+            await task.ConfigureAwait(false);
+        }
 
         foreach (Task<SolutionIndexItem[]> solutionItem in tasks)
         {

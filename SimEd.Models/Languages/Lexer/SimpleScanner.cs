@@ -8,37 +8,50 @@ public class SimpleScanner
     {
         List<Token> tokens = [];
         var pos = 0;
+        BaseRule[] rules = Rules;
+        var originalSegment = segment;
 
         while (segment.Count > 0)
         {
-            bool found = false;
-            foreach (var rule in Rules)
+            Token? foundToken = Match(segment, rules, pos);
+            if (foundToken == null)
             {
-                int matchLen = rule.Match(segment);
-                if (matchLen == 0)
-                {
-                    continue;
-                }
-
-                Token token = new Token(segment.Slice(0, matchLen), pos, rule.Kind);
-                if (tokenFilter(token))
-                {
-                    tokens.Add(token);
-                }
-
-                found = true;
-                segment = segment.Slice(matchLen);
-                pos += matchLen;
-                break;
-            }
-
-            if (!found)
-            {
-                tokens.Add(new Token(segment, pos, "Unparsed Token"));
+                Token token = new(segment, pos, "UnparsedToken");
+                tokens.Add(token);
                 return tokens.ToArray();
             }
+
+            if (tokenFilter(foundToken.Value))
+            {
+                tokens.Add(foundToken.Value);
+            }
+
+            pos += foundToken.Value.Text.Count;
+            segment = originalSegment.Slice(pos);
         }
 
         return tokens.ToArray();
+    }
+
+    private static Token? Match(
+        ArraySegment<char> segment,
+        BaseRule[] rules,
+        int pos)
+    {
+        foreach (var rule in rules)
+        {
+            int matchLen = rule.Match(segment);
+            if (matchLen == 0)
+            {
+                continue;
+            }
+
+            pos += matchLen;
+
+            Token token = new Token(segment.Slice(0, matchLen), pos, rule.Kind);
+            return token;
+        }
+
+        return null;
     }
 }

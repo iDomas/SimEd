@@ -98,6 +98,10 @@ internal static class DefaultCsScanner
 
         for (var i = 1; i < arg.Count; i++)
         {
+            if (arg[i] == arg[0] && arg[i - 1] != '\\')
+            {
+                continue;
+            }
             if (arg[i] == arg[0])
             {
                 return i + 1;

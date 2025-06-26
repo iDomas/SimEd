@@ -43,12 +43,11 @@ internal static class DefaultCsScanner
             .ToArray();
     }
 
-    private static SimpleScanner BuildScanner()
-    {
-        SimpleScanner result = new();
-        result.Rules = GetCsLexRulesList();
-        return result;
-    }
+    private static SimpleScanner BuildScanner() 
+        =>new()
+        {
+            Rules = GetCsLexRulesList()
+        };
 
     private static BaseRule[] GetCsLexRulesList()
     {

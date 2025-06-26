@@ -30,32 +30,36 @@ public class CsDeclarationsExtraction : IDeclarationsExtraction
                 continue;
             }
 
+            if (tokens[index + 1].Kind != TokenKindsCSharp.Identifier)
+            {
+                continue;
+            }
+
             resultList.Add(new SolutionIndexItem(tokens[index + 1].GetText(), fileName, token.GetText()));
         }
 
         return resultList.ToArray();
     }
 
-    public static bool IsDeclaration(Token token)
-    {
-        if (token.Kind != TokenKindsCSharp.Reserved)
-        {
-            return false;
-        }
+    private static readonly string[] Declarations =
+    [
+        "class",
+        "struct",
+        "record",
+        "interface",
+        "enum"
+    ];
 
-        string tokenText = token.GetText();
-        return tokenText switch
-        {
-            "class" or "struct" or "record" or "interface" or "enum" => true,
-            _ => false
-        };
-    }
+    private static bool IsDeclaration(Token token)
+        => token.Kind == TokenKindsCSharp.Reserved
+           && token.IsInTexts(Declarations);
 
-    private bool SkipSpaces(Token token)
+    private static bool SkipSpaces(Token token)
     {
         return token.Kind switch
         {
             TokenKindsCSharp.Spaces => false,
+            TokenKindsCSharp.Comment => false,
             _ => true
         };
     }

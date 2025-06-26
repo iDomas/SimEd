@@ -2,7 +2,7 @@ namespace SimEd.Models.Languages.Lexer;
 
 public class SimpleScanner
 {
-    public BaseRule[] Rules { get; set; } = [];
+    public BaseRule[] Rules { get; init; } = [];
 
     public Token[] Tokenize(ArraySegment<char> segment, Func<Token, bool> tokenFilter)
     {

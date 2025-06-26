@@ -1,10 +1,11 @@
+﻿using SimEd.Models.Languages.CsharpLang;
 using SimEd.Models.Languages.Lexer;
 
-namespace SimEd.Models.Languages.CsharpLang;
+namespace SimEd.Models.Languages.JavaLang;
 
-internal static class DefaultCsScanner
+internal static class JavaScanner
 {
-    public static SimpleScanner CsScanner { get; } = BuildScanner();
+    public static SimpleScanner Instance { get; } = BuildScanner();
 
     private static char[][] BuildOperatorsArray()
     {
@@ -33,9 +34,9 @@ internal static class DefaultCsScanner
     {
         string[] operators =
         [
-            "class", "record", "interface", "struct", "enum", "delegate",
-            "public", "protected", "internal", "private",
-            "namespace", "using",
+            "class", "record", "interface",  "enum", 
+            "public", "protected", "private",
+            "package",
             "return", "abstract", "as", "base", "break", "case", "catch",
         ];
         return operators
@@ -53,14 +54,14 @@ internal static class DefaultCsScanner
     {
         List<BaseRule> list =
         [
-            new LambdaRule(TokenKindsCSharp.Spaces, SpacesMatch),
-            new LambdaRule(TokenKindsCSharp.Eoln, EolnMatch),
-            new LambdaRule(TokenKindsCSharp.Comment, CommentMatch),
-            new LambdaRule(TokenKindsCSharp.QuotedString, StringMatch),
-            new LambdaRule(TokenKindsCSharp.Operator, OperatorsMatch),
-            new LambdaRule(TokenKindsCSharp.Reserved, ReservedMatch),
-            new LambdaRule(TokenKindsCSharp.Identifier, IdentifierMatch),
-            new LambdaRule(TokenKindsCSharp.Number, NumberMatch),
+            new LambdaRule(TokenKindsJava.Spaces, SpacesMatch),
+            new LambdaRule(TokenKindsJava.Eoln, EolnMatch),
+            new LambdaRule(TokenKindsJava.Comment, CommentMatch),
+            new LambdaRule(TokenKindsJava.QuotedString, StringMatch),
+            new LambdaRule(TokenKindsJava.Operator, OperatorsMatch),
+            new LambdaRule(TokenKindsJava.Reserved, ReservedMatch),
+            new LambdaRule(TokenKindsJava.Identifier, IdentifierMatch),
+            new LambdaRule(TokenKindsJava.Number, NumberMatch),
         ];
 
         return list.ToArray();

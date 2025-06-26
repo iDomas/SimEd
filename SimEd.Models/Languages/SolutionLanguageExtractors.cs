@@ -1,7 +1,9 @@
 using SimEd.Models.Languages.Common;
+using SimEd.Models.Languages.CsharpLang;
+using SimEd.Models.Languages.JavaLang;
 using ZLinq;
 
-namespace SimEd.Models.Languages.CsharpLang;
+namespace SimEd.Models.Languages;
 
 public class SolutionLanguageExtractors
 {
@@ -9,11 +11,12 @@ public class SolutionLanguageExtractors
 
     private static IDeclarationsExtraction[] BuildDefaultList()
     {
-        List<IDeclarationsExtraction> extractions =
+        IDeclarationsExtraction[] extractions =
         [
-            new CsDeclarationsExtraction()
+            new CsDeclarationsExtraction(),
+            new JavaDeclarationsExtraction()
         ];
-        return extractions.ToArray();
+        return extractions;
     }
 
     public async Task<SolutionIndexItem[]> Parse(SolutionItem solutionItem)

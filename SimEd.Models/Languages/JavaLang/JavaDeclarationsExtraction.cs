@@ -1,18 +1,18 @@
 ﻿using SimEd.Models.Languages.Common;
 using SimEd.Models.Languages.Lexer;
 
-namespace SimEd.Models.Languages.CsharpLang;
+namespace SimEd.Models.Languages.JavaLang;
 
-public class CsDeclarationsExtraction : IDeclarationsExtraction
+public class JavaDeclarationsExtraction: IDeclarationsExtraction
 {
     public bool IsFileMatcher(string fileName)
     {
-        return fileName.EndsWith(".cs");
+        return fileName.EndsWith(".java");
     }
 
     public SolutionIndexItem[] ExtractFileDefinitions(string fileName, char[] fileData)
     {
-        SimpleScanner scanner = CsScanner.Instance;
+        SimpleScanner scanner = JavaScanner.Instance;
 
         var tokens = scanner.Tokenize(fileData, SkipSpaces).ToArray();
         return BuildDeclarationsFromTokens(tokens, fileName);
@@ -29,7 +29,7 @@ public class CsDeclarationsExtraction : IDeclarationsExtraction
                 continue;
             }
 
-            if (tokens[index + 1].Kind != TokenKindsCSharp.Identifier)
+            if (tokens[index + 1].Kind != TokenKindsJava.Identifier)
             {
                 continue;
             }
@@ -50,15 +50,15 @@ public class CsDeclarationsExtraction : IDeclarationsExtraction
     ];
 
     private static bool IsDeclaration(Token token)
-        => token.Kind == TokenKindsCSharp.Reserved
+        => token.Kind == TokenKindsJava.Reserved
            && token.IsInTexts(Declarations);
 
     private static bool SkipSpaces(Token token)
     {
         return token.Kind switch
         {
-            TokenKindsCSharp.Spaces => false,
-            TokenKindsCSharp.Comment => false,
+            TokenKindsJava.Spaces => false,
+            TokenKindsJava.Comment => false,
             _ => true
         };
     }

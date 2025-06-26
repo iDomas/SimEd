@@ -11,7 +11,7 @@ internal static class JavaScanner
     {
         string[] operators =
         [
-            ".", ",", ";", ":",
+            ".", ",", ";", ":", "%",
             "+=", "-=", "*=", "/=",
             "+", "-", "*", "/",
             "==",

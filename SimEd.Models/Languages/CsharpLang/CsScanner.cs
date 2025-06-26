@@ -10,7 +10,7 @@ internal static class CsScanner
     {
         string[] operators =
         [
-            ".", ",", ";", ":",
+            ".", ",", ";", ":","%",
             "+=", "-=", "*=", "/=",
             "+", "-", "*", "/",
             "==",

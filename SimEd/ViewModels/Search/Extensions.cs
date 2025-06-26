@@ -10,7 +10,7 @@ internal static class Extensions
             if (leaf.Count == 0)
             {
                 yield return item;
-                break;
+                continue;
             }
 
             IEnumerable<T> leafsIterator = Leafs<T>(leaf, childSelector);

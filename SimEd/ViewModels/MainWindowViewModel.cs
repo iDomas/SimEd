@@ -206,7 +206,7 @@ public class MainWindowViewModel : ObservableObject, IDropTarget
         return true;
     }
 
-    private async Task SaveFileViewModel(FileViewModel fileViewModel)
+    private static async Task SaveFileViewModel(FileViewModel fileViewModel)
     {
         await File.WriteAllTextAsync(fileViewModel.Path, fileViewModel.Text ?? "",
             Encoding.GetEncoding(fileViewModel.Encoding));

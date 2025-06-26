@@ -7,8 +7,7 @@ public class CsDeclarationsExtraction : IDeclarationsExtraction
 {
     public bool IsFileMatcher(string fileName)
     {
-        string extension = Path.GetExtension(fileName);
-        return extension == ".cs";
+        return fileName.EndsWith(".cs");
     }
 
     public SolutionIndexItem[] ExtractFileDefinitions(string fileName, char[] fileData)

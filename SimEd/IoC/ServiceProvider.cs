@@ -6,6 +6,7 @@ using SimEd.IoC.Tools;
 using SimEd.Models;
 using SimEd.ViewModels;
 using SimEd.ViewModels.Documents;
+using SimEd.ViewModels.Settings;
 using SimEd.ViewModels.Solution;
 
 namespace SimEd.IoC;
@@ -19,4 +20,5 @@ namespace SimEd.IoC;
 [Singleton(typeof(SolutionViewModel))]
 [Singleton(typeof(MainWindowViewModel))]
 [Transient<FileViewModel>]
+[Singleton(typeof(OptionsDialogViewModel))]
 public partial class ServiceProvider;

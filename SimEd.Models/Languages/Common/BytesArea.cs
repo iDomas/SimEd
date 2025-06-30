@@ -6,7 +6,7 @@ public record struct BytesArea (byte[] Data, int Start, int Len)
 {
     public override string ToString()
     {
-        var data = Data.AsSpan(Start, Len).ToArray();
+        byte[] data = Data.AsSpan(Start, Len).ToArray();
         return Encoding.UTF8.GetString(data);
     }
 }

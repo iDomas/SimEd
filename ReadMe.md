@@ -1,5 +1,12 @@
-﻿Themes
+﻿Sim(ple) Ed(itor)
 ===
-Reversal icon theme
-https://github.com/yeyushengfan258/Reversal-icon-theme
+Very responsive fast text editor.
+
+How it works?
+---
+It is based on multiple .Net technologies like Avalonia, AvalonEdit, AvalonDock to be a 
+basic editor.
+
+To reach faster responsitivity, it is based on .Net AOT (aka native compilation) and 
+we recommend .Net 9+ for best experience.
 

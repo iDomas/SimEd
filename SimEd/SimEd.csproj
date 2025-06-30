@@ -8,24 +8,23 @@
 
     <PropertyGroup>
         <PublishTrimmed>true</PublishTrimmed>
-        <TargetPlatform>win-x86</TargetPlatform>
         <PublishAot>true</PublishAot>
         <OptimizationPreference>Speed</OptimizationPreference>
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.3.1" />
+        <PackageReference Include="Avalonia" Version="11.3.2" />
         <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.3.0"/>
-        <PackageReference Include="Avalonia.Desktop" Version="11.3.1" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.2" />
         <PackageReference Include="Avalonia.Svg.Skia" Version="11.3.0" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.1" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.1" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.2" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.2" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Include="Avalonia.Diagnostics" Version="11.3.1">
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.3.2">
             <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Avalonia.Themes.Simple" Version="11.3.1" />
+        <PackageReference Include="Avalonia.Themes.Simple" Version="11.3.2" />
         <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.3.0.6" />
         <PackageReference Include="AvaloniaEdit.TextMate" Version="11.3.0"/>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
@@ -38,7 +37,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="TextMateSharp.Grammars" Version="1.0.69" />
-        <PackageReference Include="ZLinq" Version="1.4.10" />
+        <PackageReference Include="ZLinq" Version="1.4.12" />
 
         <Reference Include="Avalonia.Themes.Simple"/>
     </ItemGroup>

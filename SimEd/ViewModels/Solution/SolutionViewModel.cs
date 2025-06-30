@@ -8,6 +8,8 @@ using SimEd.Common.Interfaces;
 using SimEd.Events;
 using SimEd.Interfaces;
 using SimEd.Models;
+using SimEd.Models.FileChoosers;
+using SimEd.Models.Languages;
 using SimEd.ViewModels.Documents;
 using SimEd.Views.Solution;
 
@@ -17,6 +19,7 @@ public class SolutionViewModel : Tool, IViewAware
 {
     private readonly IMiniPubSub _pubSub;
     private readonly IAppSettingsReader _appSettingsReader;
+    private readonly IFileDialogChooser _fileChooser;
 
     public ObservableCollection<SolutionItem> Nodes { get; set; } = [];
     public SolutionView View { get; set; }
@@ -30,10 +33,11 @@ public class SolutionViewModel : Tool, IViewAware
     private string _solutionPath = Directory.GetCurrentDirectory();
     private SolutionItem? _selected;
 
-    public SolutionViewModel(IMiniPubSub pubSub, IAppSettingsReader appSettingsReader)
+    public SolutionViewModel(IMiniPubSub pubSub, IAppSettingsReader appSettingsReader, IFileDialogChooser fileChooser)
     {
         _pubSub = pubSub;
         _appSettingsReader = appSettingsReader;
+        _fileChooser = fileChooser;
 
         _pubSub.AddEventHandler<ChangeSolutionFolderCommand>(OnChangeSolutionFolder);
         _pubSub.AddEventHandler<ChangedFocusedTab>(OnChangedFocusedTab);
@@ -116,25 +120,16 @@ public class SolutionViewModel : Tool, IViewAware
 
     public async void OnSolutionChosen()
     {
-        IStorageProvider? storageProvider = StorageService.GetStorageProvider();
-        if (storageProvider is null)
+        string? selectedDirectory = await _fileChooser.ChooseDirectory();
+        if (selectedDirectory == null)
         {
             return;
         }
-
-        IReadOnlyList<IStorageFolder> results = await storageProvider.OpenFolderPickerAsync(
-            new FolderPickerOpenOptions()
-            {
-                Title = "Open Solution",
-                AllowMultiple = false
-            });
-
-        if (results is { Count: > 0 })
-        {
-            Uri selectedDir = results[0].Path;
-            SolutionPath = new DirectoryInfo(selectedDir.AbsolutePath).FullName;
-        }
+        SolutionPath = selectedDirectory;
+        return;
     }
+
+    private static IStorageProvider StorageProvider => StorageService.GetStorageProvider()!;
 
     public void SetControl(Control control)
     {
